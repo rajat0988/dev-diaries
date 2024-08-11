@@ -14,12 +14,6 @@
 
     <form action="{{ route('questions.store') }}" method="POST">
         @csrf
-        <label for="UserName">User Name:</label><br>
-        <input type="text" id="UserName" name="UserName" required><br><br>
-
-        <label for="EmailId">Email Id:</label><br>
-        <input type="email" id="EmailId" name="EmailId" required><br><br>
-
         <label for="Title">Title:</label><br>
         <input type="text" id="Title" name="Title" required><br><br>
 

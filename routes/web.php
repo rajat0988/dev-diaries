@@ -45,7 +45,7 @@ Route::post('/email/verification-notification', function (Request $request) {
  
 Route::middleware(['auth','verified'])->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return redirect('/');
     })->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');

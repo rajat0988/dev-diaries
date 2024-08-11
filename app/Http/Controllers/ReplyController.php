@@ -7,33 +7,38 @@ use App\Models\Question;
 use App\Models\Reply;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 
 
 class ReplyController extends Controller
 {
     public function store(Request $request, $questionId)
-    {
-        $request->validate([
-            'UserName' => 'required|string|max:255',
-            'EmailId' => 'required|email|max:255',
-            'Content' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'Content' => 'required|string',
+    ]);
 
-        $question = Question::findOrFail($questionId);
+    $user = Auth::user();;
+    $question = Question::findOrFail($questionId);
 
-        $question->replies()->create([
-            'UserName' => $request->input('UserName'),
-            'EmailId' => $request->input('EmailId'),
-            'Content' => $request->input('Content'),
-        ]);
 
-        $question->update([
-            'Answered' => true,
-        ]);
+    $reply = new Reply;
+    $reply->question_id = $questionId;
+    $reply->UserName = $user->name;
+    $reply->EmailId = $user->email;
+    $reply->Content = $request->input('Content');
+    $reply->Upvotes = 0;
+    $reply->save();
 
-        return redirect()->route('questions.show', $questionId)->with('success', 'Reply added successfully!');
-    }
+    $question->update([
+        'Answered' => true,
+    ]);
+
+    return redirect()->route('questions.show', $questionId)->with('success', 'Reply posted successfully!');
+}
+
 
     public function upvote($id)
     {
@@ -49,15 +54,5 @@ class ReplyController extends Controller
         return redirect()->back()->with('success', 'Reply downvoted successfully!');
     }
 
-    public function resetAutoIncrement()
-    {
-        // Delete all records in the replies table
-        DB::table('replies')->delete();
-
-        // Reset the auto-increment counter
-        DB::statement('DELETE FROM sqlite_sequence WHERE name="replies";');
-
-        return redirect()->back()->with('success', 'Auto-increment counter reset successfully!');
-    }
-
+    // DB::statement('DELETE FROM sqlite_sequence WHERE name="replies";');
 }

@@ -70,14 +70,6 @@
                     <h4>Reply Here:</h4>
                     <form action="{{ route('replies.store', $question->id) }}" method="POST">
                         @csrf
-                        <div>
-                            <label for="UserName">Your Name:</label>
-                            <input type="text" id="UserName" name="UserName" class="border p-2" required>
-                        </div>
-                        <div class="mt-2">
-                            <label for="EmailId">Your Email:</label>
-                            <input type="email" id="EmailId" name="EmailId" class="border p-2" required>
-                        </div>
                         <div class="mt-2">
                             <label for="Content">Reply:</label>
                             <textarea id="Content" name="Content" class="border p-2" rows="4" required></textarea>

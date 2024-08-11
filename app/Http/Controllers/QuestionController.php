@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Question;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class QuestionController extends Controller
@@ -15,28 +17,26 @@ class QuestionController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'UserName' => 'required|string|max:255',
-        'EmailId' => 'required|email|max:255',
-        'Title' => 'required|string|max:255',
-        'Content' => 'required|string',
-        'Upvotes' => 'nullable|integer|min:0',
-        'Tags' => 'nullable|array',
-        'Answered' => 'nullable|boolean',
-    ]);
+    {
+        $request->validate([
+            'Title' => 'required|string|max:255',
+            'Content' => 'required|string',
+            'Tags' => 'nullable|array',
+        ]);
 
-    $post = new Question;
-    $post->UserName = $request->input('UserName');
-    $post->EmailId = $request->input('EmailId');
-    $post->Title = $request->input('Title');
-    $post->Content = $request->input('Content');
-    $post->Upvotes = 0;
-    $post->Tags = json_encode($request->input('Tags', []));
-    $post->Answered = false;
-    $post->save();
+        $user = Auth::user();
 
-    return redirect()->route('questions.index')->with('success', 'Post created successfully!');
+        $post = new Question;
+        $post->UserName = $user->name;
+        $post->EmailId = $user->email;
+        $post->Title = $request->input('Title');
+        $post->Content = $request->input('Content');
+        $post->Upvotes = 0;
+        $post->Tags = json_encode($request->input('Tags', []));
+        $post->Answered = false;
+        $post->save();
+
+        return redirect()->route('questions.index')->with('success', 'Post created successfully!');
     }
 
     public function index()
