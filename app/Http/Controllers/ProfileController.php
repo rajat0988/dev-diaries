@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
+use App\Models\Question;
+use App\Models\Reply;
 
 class ProfileController extends Controller
 {
@@ -20,6 +23,19 @@ class ProfileController extends Controller
             'user' => $request->user(),
         ]);
     }
+
+    public function show()
+    {
+        $user = Auth::user();
+
+        $questions = $user->questions;
+        //inteliphense shows error but still works!!
+        $replies = $user->replies()->with('question')->get()->unique('question_id');
+
+
+        return view('profile.show', compact('user', 'questions', 'replies'));
+    }
+
 
     /**
      * Update the user's profile information.

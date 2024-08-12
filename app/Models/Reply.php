@@ -31,6 +31,6 @@ class Reply extends Model
     // Define the inverse relationship with the Question model
     public function question()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(Question::class,'question_id');
     }
 }

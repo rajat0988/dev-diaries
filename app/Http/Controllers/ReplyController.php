@@ -9,9 +9,6 @@ use App\Models\Reply;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-
-
-
 class ReplyController extends Controller
 {
     public function store(Request $request, $questionId)
@@ -22,7 +19,6 @@ class ReplyController extends Controller
 
     $user = Auth::user();;
     $question = Question::findOrFail($questionId);
-
 
     $reply = new Reply;
     $reply->question_id = $questionId;
@@ -39,7 +35,6 @@ class ReplyController extends Controller
     return redirect()->route('questions.show', $questionId)->with('success', 'Reply posted successfully!');
 }
 
-
     public function upvote($id)
     {
         $reply = Reply::findOrFail($id);
@@ -54,5 +49,6 @@ class ReplyController extends Controller
         return redirect()->back()->with('success', 'Reply downvoted successfully!');
     }
 
+    //Do not uncomment this under any circumstance. 
     // DB::statement('DELETE FROM sqlite_sequence WHERE name="replies";');
 }
