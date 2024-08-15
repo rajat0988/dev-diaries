@@ -41,7 +41,7 @@ class QuestionController extends Controller
 
     public function index()
     {
-        $all_questions = Question::orderBy('created_at', 'desc')->get();
+        $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
         return view('questions.index', compact('all_questions'));
     }
 
@@ -68,20 +68,21 @@ class QuestionController extends Controller
     public function filterByTag(Request $request)
     {
         $selectedTags = $request->input('tags');
-
+        
         if ($selectedTags) {
-            // Filter questions by selected tags
+            // Filter questions by selected tags with pagination
             $filtered_questions = Question::where(function($query) use ($selectedTags) {
                 foreach ($selectedTags as $tag) {
                     $query->orWhereJsonContains('Tags', $tag);
                 }
-            })->orderBy('created_at', 'desc')->get();
+            })->orderBy('created_at', 'desc')->paginate(5);
         } else {
-            $filtered_questions = [];
+            $filtered_questions = collect(); // Empty collection
         }
-
-        $all_questions = Question::orderBy('created_at', 'desc')->get();
-
+        
+        $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
+        
         return view('questions.index', compact('filtered_questions', 'all_questions', 'selectedTags'));
     }
+    
 }

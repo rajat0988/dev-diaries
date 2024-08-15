@@ -27,14 +27,18 @@ class ProfileController extends Controller
     public function show()
     {
         $user = Auth::user();
+    
+        $questions = $user->questions()->paginate(5);
+    
+        $replies = $user->replies()->with('question')->paginate(5);
+    
+        $uniqueReplies = $replies->getCollection()->unique('question_id');
 
-        $questions = $user->questions;
-        //inteliphense shows error but still works!!
-        $replies = $user->replies()->with('question')->get()->unique('question_id');
-
-
+        $replies->setCollection($uniqueReplies);
+    
         return view('profile.show', compact('user', 'questions', 'replies'));
     }
+    
 
 
     /**
