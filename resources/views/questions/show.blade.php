@@ -33,6 +33,14 @@
                     @csrf
                     <button type="submit" class="bg-red-500 text-black px-4 py-2">Downvote</button>
                 </form>
+
+                @if(Auth::user()->role === "admin")
+                <form action="{{ route('questions.destroy', $question->id) }}" method="POST" class="inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-700 text-black px-4 py-2">Delete Question</button>
+                </form>
+                @endif
             </div>
         </div>
 
@@ -40,26 +48,36 @@
             <div class="p-6 text-gray-900">
                 <h4>Replies:</h4>
                 @forelse($question->replies as $reply)
-                    <div class="border-t border-gray-200 mt-4">
-                        <p>{{ $reply->Content }}</p>
-                        <p>Replied by: {{ $reply->UserName }}</p>
-                        <p>Email: {{ $reply->EmailId }}</p>
-                        <p>Upvotes: {{ $reply->Upvotes }}</p>
-                        <p>Created at: {{ $reply->created_at->diffForHumans() }}</p>
-                        
-                        <form action="{{ route('replies.upvote', $reply->id) }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="bg-green-500 text-gray px-4 py-2">Upvote</button>
-                        </form>
+                <div class="border-t border-gray-200 mt-4">
+                    <p>{{ $reply->Content }}</p>
+                    <p>Replied by: {{ $reply->UserName }}</p>
+                    <p>Email: {{ $reply->EmailId }}</p>
+                    <p>Upvotes: {{ $reply->Upvotes }}</p>
+                    <p>Created at: {{ $reply->created_at->diffForHumans() }}</p>
+                    
+                    <form action="{{ route('replies.upvote', $reply->id) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="bg-green-500 text-gray px-4 py-2">Upvote</button>
+                    </form>
+            
+                    <form action="{{ route('replies.downvote', $reply->id) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="bg-red-500 text-black px-4 py-2">Downvote</button>
+                    </form>
 
-                        <form action="{{ route('replies.downvote', $reply->id) }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="bg-red-500 text-black px-4 py-2">Downvote</button>
-                        </form>
-                    </div>
-                @empty
-                    <p>No replies yet.</p>
-                @endforelse
+                    @if(Auth::user()->role === "admin")
+                    <form action="{{ route('replies.destroy', $reply->id) }}" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-700 text-black px-4 py-2">Delete Reply</button>
+                    </form>
+                @endif
+                    
+                </div>
+            @empty
+                <p>No replies yet.</p>
+            @endforelse
+            
                 </div>
             </div>
 

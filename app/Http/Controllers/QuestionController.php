@@ -7,8 +7,6 @@ use App\Models\Question;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-
-
 class QuestionController extends Controller
 {
     public function create()
@@ -22,9 +20,19 @@ class QuestionController extends Controller
             'Title' => 'required|string|max:255',
             'Content' => 'required|string',
             'Tags' => 'nullable|array',
+            'custom_tags' => 'nullable|string',
         ]);
 
         $user = Auth::user();
+        $tags = $request->input('Tags', []);
+
+        $customTags = $request->input('custom_tags');
+        if ($customTags) {
+            $customTagsArray = array_map('trim', explode(',', $customTags));
+            $tags = array_merge($tags, $customTagsArray);
+        }
+
+        $tags = array_unique($tags);
 
         $post = new Question;
         $post->UserName = $user->name;
@@ -32,7 +40,7 @@ class QuestionController extends Controller
         $post->Title = $request->input('Title');
         $post->Content = $request->input('Content');
         $post->Upvotes = 0;
-        $post->Tags = json_encode($request->input('Tags', []));
+        $post->Tags = json_encode($tags);
         $post->Answered = false;
         $post->save();
 
@@ -41,13 +49,26 @@ class QuestionController extends Controller
 
     public function index()
     {
+        $tagCounts = DB::table('questions')
+            ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
+            ->pluck('tag')
+            ->flatten()
+            ->map(fn($tag) => json_decode($tag, true))
+            ->flatten()
+            ->filter()
+            ->countBy()
+            ->sortDesc();
+
+        $mostUsedTags = $tagCounts->keys()->take(10);
+
         $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
-        return view('questions.index', compact('all_questions'));
+
+        return view('questions.index', compact('all_questions', 'mostUsedTags'));
     }
 
     public function show($id)
     {
-        $question = Question::findOrFail($id);
+        $question = Question::with('replies')->findOrFail($id);
         return view('questions.show', compact('question'));
     }
 
@@ -68,21 +89,62 @@ class QuestionController extends Controller
     public function filterByTag(Request $request)
     {
         $selectedTags = $request->input('tags');
-        
+        $allTags = Question::all()->pluck('Tags');
+
+        $tagCounts = DB::table('questions')
+            ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
+            ->pluck('tag')
+            ->flatten()
+            ->map(fn($tag) => json_decode($tag, true))
+            ->flatten()
+            ->filter()
+            ->countBy()
+            ->sortDesc();
+
+        $mostUsedTags = $tagCounts->keys()->take(10);
+
         if ($selectedTags) {
-            // Filter questions by selected tags with pagination
-            $filtered_questions = Question::where(function($query) use ($selectedTags) {
+            $filtered_questions = Question::where(function ($query) use ($selectedTags) {
                 foreach ($selectedTags as $tag) {
                     $query->orWhereJsonContains('Tags', $tag);
                 }
             })->orderBy('created_at', 'desc')->paginate(5);
         } else {
-            $filtered_questions = collect(); // Empty collection
+            $filtered_questions = collect();
         }
-        
+
         $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
-        
-        return view('questions.index', compact('filtered_questions', 'all_questions', 'selectedTags'));
+
+        return view('questions.index', compact('filtered_questions', 'all_questions', 'mostUsedTags', 'selectedTags'));
     }
-    
+
+    public function loadMoreTags()
+    {
+        $tagCounts = DB::table('questions')
+            ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
+            ->pluck('tag')
+            ->flatten()
+            ->map(fn($tag) => json_decode($tag, true))
+            ->flatten()
+            ->filter()
+            ->countBy()
+            ->sortDesc();
+
+        $tagsToShow = $tagCounts->keys()->take(50);
+        $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
+
+        return view('questions.index', compact('all_questions', 'tagsToShow'));
+    }
+
+    public function destroy($id)
+    {
+        $question = Question::findOrFail($id);
+        $question->delete();
+
+        if ($question->replies->isEmpty()) {
+            $question->update(['Answered' => false]);
+        }
+
+        return redirect()->route('questions.index')->with('success', 'Question deleted successfully!');
+    }
 }

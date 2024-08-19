@@ -141,6 +141,7 @@ a:hover {
     <div class="main-content">
         <a href="{{ route('questions.create') }}" class="btn btn-primary">Ask a Question</a>
         <br>
+        <br>
         @if(isset($selectedTags) && !empty($selectedTags))
             <h1>Filtered Questions</h1>
             <ul class="list-disc pl-5">
@@ -183,13 +184,22 @@ a:hover {
         <div class="box">
             <h2>Apply filters:</h2>
             <form action="{{ route('questions.filter') }}" method="GET" class="mb-4">
+                @if(isset($tagsToShow))
+                    <div>
+                        <h2>All Tags</h2>
+                        @foreach($tagsToShow as $tag)
+                            <label class="block mb-2">
+                                <input type="checkbox" name="tags[]" value="{{ $tag }}"
+                                @if(is_array(request('tags')) && in_array($tag, request('tags'))) checked @endif>
+                                {{ $tag }}
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @else
                 <div>
                     <h3>Filter by Tags</h3>
-                    @php
-                        $availableTags = ['Laravel', 'PHP', 'JavaScript', 'CSS', 'HTML'];
-                    @endphp
-    
-                    @foreach($availableTags as $tag)
+                    @foreach($mostUsedTags as $tag)
                         <label class="block mb-2">
                             <input type="checkbox" name="tags[]" value="{{ $tag }}"
                             @if(is_array(request('tags')) && in_array($tag, request('tags'))) checked @endif>
@@ -197,9 +207,10 @@ a:hover {
                         </label>
                     @endforeach
                 </div>
-                <br>
+            @endif
                 <button type="submit" class="btn btn-primary">Filter</button>
             </form>
+            <a href="{{ route('questions.loadMoreTags') }}" class="btn btn-primary">Load More Tags</a>
         </div>
     </div>
 </div>

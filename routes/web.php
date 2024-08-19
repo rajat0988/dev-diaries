@@ -7,9 +7,16 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ReplyController;
 use Illuminate\Http\Request;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+use App\Http\Middleware\AdminMiddleware;
 
+Route::middleware(['auth', AdminMiddleware::class])->group(function () {
+    Route::delete('/questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
+    Route::delete('/replies/{id}', [ReplyController::class, 'destroy'])->name('replies.destroy');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/questions', [QuestionController::class, 'index'])->name('questions.index');
+    Route::get('/questions/load-more-tags', [QuestionController::class, 'loadMoreTags'])->name('questions.loadMoreTags');
     Route::get('/questions/filter', [QuestionController::class, 'filterByTag'])->name('questions.filter');
     Route::post('/questions/{question}/replies', [ReplyController::class, 'store'])->name('replies.store');
     Route::post('/questions/{id}/upvote', [QuestionController::class, 'upvote'])->name('questions.upvote');

@@ -75,6 +75,11 @@
             margin-right: 8px;
         }
 
+        .custom-tag-input {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
         button {
             padding: 10px 15px;
             font-size: 16px;
@@ -126,7 +131,6 @@
             <div class="tags">
                 <h4>Select Tags:</h4>
                 @php
-                    // Example tags, this could be replaced with dynamic tags from the database
                     $tags = ['Laravel', 'PHP', 'JavaScript', 'CSS', 'HTML'];
                 @endphp
 
@@ -136,6 +140,11 @@
                         <label for="tag_{{ $tag }}">{{ $tag }}</label>
                     </div>
                 @endforeach
+
+                <div class="custom-tag-input">
+                    <label for="custom-tags">Or add custom tags (comma-separated):</label>
+                    <input type="text" id="custom-tags" name="custom_tags" placeholder="e.g. DSA,DBMS">
+                </div>
             </div>
 
             <div style="text-align: center;">
