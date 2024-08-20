@@ -36,6 +36,7 @@ class QuestionController extends Controller
 
         $post = new Question;
         $post->UserName = $user->name;
+        $post->user_id = Auth::id();
         $post->EmailId = $user->email;
         $post->Title = $request->input('Title');
         $post->Content = $request->input('Content');

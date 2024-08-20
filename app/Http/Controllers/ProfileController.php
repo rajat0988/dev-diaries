@@ -24,22 +24,18 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function show()
+    public function show($id)
     {
-        $user = Auth::user();
-    
+        $user = User::findOrFail($id);
+        
         $questions = $user->questions()->paginate(5);
-    
         $replies = $user->replies()->with('question')->paginate(5);
     
         $uniqueReplies = $replies->getCollection()->unique('question_id');
-
         $replies->setCollection($uniqueReplies);
-    
+        
         return view('profile.show', compact('user', 'questions', 'replies'));
     }
-    
-
 
     /**
      * Update the user's profile information.

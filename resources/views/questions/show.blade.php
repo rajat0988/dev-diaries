@@ -13,7 +13,7 @@
             <div class="p-6 text-gray-900">
                 <h3>{{ $question->Title }}</h3>
                 <p>{{ $question->Content }}</p>
-                <p>Asked by: {{ $question->UserName }}</p>
+              <p>Asked by: <a style="color: #105aa3;" href="{{ route('profile.show', ['id' => $question->user_id]) }}">{{ $question->UserName }}</a></p>
                 <p>Email: {{ $question->EmailId }}</p>
                 <p>Upvotes: {{ $question->Upvotes }}</p>
                 <p>Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
@@ -50,8 +50,8 @@
                 @forelse($question->replies as $reply)
                 <div class="border-t border-gray-200 mt-4">
                     <p>{{ $reply->Content }}</p>
-                    <p>Replied by: {{ $reply->UserName }}</p>
-                    <p>Email: {{ $reply->EmailId }}</p>
+                    <p>Replied by: <a style="color: #105aa3;" href="{{ route('profile.show', ['id' => $reply->user_id]) }}">{{ $reply->UserName }}</a></p>
+                    <p>Email: {{ $reply->EmailId }}</p>                    
                     <p>Upvotes: {{ $reply->Upvotes }}</p>
                     <p>Created at: {{ $reply->created_at->diffForHumans() }}</p>
                     

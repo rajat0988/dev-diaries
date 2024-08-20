@@ -23,6 +23,7 @@ class ReplyController extends Controller
         $reply = new Reply;
         $reply->question_id = $questionId;
         $reply->UserName = $user->name;
+        $reply->user_id = Auth::id();
         $reply->EmailId = $user->email;
         $reply->Content = $request->input('Content');
         $reply->Upvotes = 0;
@@ -56,8 +57,4 @@ class ReplyController extends Controller
 
         return redirect()->back()->with('success', 'Reply deleted successfully!');
     }
-
-
-    //Do not uncomment this under any circumstance. 
-    // DB::statement('DELETE FROM sqlite_sequence WHERE name="replies";');
 }
