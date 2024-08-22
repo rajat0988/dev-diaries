@@ -5,6 +5,9 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ReplyController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ReportController;
+
 use Illuminate\Http\Request;
 
 use App\Http\Middleware\AdminMiddleware;
@@ -12,6 +15,7 @@ use App\Http\Middleware\AdminMiddleware;
 Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::delete('/questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
     Route::delete('/replies/{id}', [ReplyController::class, 'destroy'])->name('replies.destroy');
+    Route::get('/admin/reported', [AdminController::class, 'reportedItems'])->name('admin.reported');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -21,6 +25,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/questions/{question}/replies', [ReplyController::class, 'store'])->name('replies.store');
     Route::post('/questions/{id}/upvote', [QuestionController::class, 'upvote'])->name('questions.upvote');
     Route::post('/questions/{id}/downvote', [QuestionController::class, 'downvote'])->name('questions.downvote');
+    Route::post('/report/question/{id}', [ReportController::class, 'reportQuestion'])->name('report.question');
+    Route::post('/report/reply/{id}', [ReportController::class, 'reportReply'])->name('report.reply');
+
 
     Route::post('/replies/{id}/upvote', [ReplyController::class, 'upvote'])->name('replies.upvote');
     Route::post('/replies/{id}/downvote', [ReplyController::class, 'downvote'])->name('replies.downvote');

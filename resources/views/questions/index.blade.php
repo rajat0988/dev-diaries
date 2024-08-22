@@ -168,6 +168,10 @@ a:hover {
             <a href="{{ route('questions.create') }}" class="btn btn-primary">Ask a Question</a>
             <br>
             <br>
+            @if(Auth::user()->role === "admin")
+            <a href="{{ route('admin.reported') }}" class="btn btn-primary">View Reported</a>
+            <br><br>
+            @endif
             @if(isset($selectedTags) && !empty($selectedTags))
                 <h1>Filtered Questions</h1>
                 <ul class="list-disc pl-5">

@@ -7,13 +7,12 @@
 @endsection
 
 @section('content')
-    <a href="{{ url('/') }}" class="btn btn-primary">Home</a>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900">
                 <h3>{{ $question->Title }}</h3>
                 <p>{{ $question->Content }}</p>
-              <p>Asked by: <a style="color: #105aa3;" href="{{ route('profile.show', ['id' => $question->user_id]) }}">{{ $question->UserName }}</a></p>
+                <p>Asked by: <a style="color: #105aa3;" href="{{ route('profile.show', ['id' => $question->user_id]) }}">{{ $question->UserName }}</a></p>
                 <p>Email: {{ $question->EmailId }}</p>
                 <p>Upvotes: {{ $question->Upvotes }}</p>
                 <p>Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
@@ -32,6 +31,11 @@
                 <form action="{{ route('questions.downvote', $question->id) }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" class="bg-red-500 text-black px-4 py-2">Downvote</button>
+                </form>
+
+                <form action="{{ route('report.question', $question->id) }}" method="POST" class="inline">
+                    @csrf
+                    <button type="submit" class="bg-red-500 text-black px-4 py-2">Report Question</button>
                 </form>
 
                 @if(Auth::user()->role === "admin")
@@ -63,6 +67,11 @@
                     <form action="{{ route('replies.downvote', $reply->id) }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="bg-red-500 text-black px-4 py-2">Downvote</button>
+                    </form>
+
+                    <form action="{{ route('report.reply', $reply->id) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="bg-red-500 text-black px-4 py-2">Report Reply</button>
                     </form>
 
                     @if(Auth::user()->role === "admin")
