@@ -39,14 +39,50 @@ class ReplyController extends Controller
     public function upvote($id)
     {
         $reply = Reply::findOrFail($id);
-        $reply->upvote();
+        $user = Auth::user();
+    
+        $existingVote = $reply->votes()->where('user_id', $user->id)->first();
+    
+        if ($existingVote) {
+            if ($existingVote->vote_type == 1) {
+                return redirect()->back()->with('error', 'You have already upvoted this reply.');
+            } else {
+                $existingVote->update(['vote_type' => 1]);
+                $reply->increment('Upvotes', 2);
+            }
+        } else {
+            $reply->votes()->create([
+                'user_id' => $user->id,
+                'vote_type' => 1
+            ]);
+            $reply->upvote();
+        }
+    
         return redirect()->back()->with('success', 'Reply upvoted successfully!');
     }
-
+    
     public function downvote($id)
     {
         $reply = Reply::findOrFail($id);
-        $reply->downvote();
+        $user = Auth::user();
+    
+        $existingVote = $reply->votes()->where('user_id', $user->id)->first();
+    
+        if ($existingVote) {
+            if ($existingVote->vote_type == 0) {
+                return redirect()->back()->with('error', 'You have already downvoted this reply.');
+            } else {
+                $existingVote->update(['vote_type' => 0]);
+                $reply->decrement('Upvotes', 2);
+            }
+        } else {
+            $reply->votes()->create([
+                'user_id' => $user->id,
+                'vote_type' => 0
+            ]);
+            $reply->downvote();
+        }
+    
         return redirect()->back()->with('success', 'Reply downvoted successfully!');
     }
 

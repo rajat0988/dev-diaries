@@ -18,6 +18,11 @@ class Reply extends Model
         'Upvotes'
     ];
 
+    public function votes()
+    {
+        return $this->morphMany(Vote::class, 'votable');
+    }
+
     public function upvote()
     {
         $this->increment('Upvotes');
@@ -27,6 +32,7 @@ class Reply extends Model
     {
         $this->decrement('Upvotes');
     }
+
 
     // Define the inverse relationship with the Question model
     public function question()

@@ -76,16 +76,56 @@ class QuestionController extends Controller
     public function upvote($id)
     {
         $question = Question::findOrFail($id);
-        $question->upvote();
+        $user = Auth::user();
+    
+        $existingVote = $question->votes()->where('user_id', $user->id)->first();
+    
+        if ($existingVote) {
+            if ($existingVote->vote_type == 1) {
+                // User has already upvoted, so do nothing or optionally, remove the vote.
+                return redirect()->back()->with('error', 'You have already upvoted this question.');
+            } else {
+                // User has downvoted, switch to upvote
+                $existingVote->update(['vote_type' => 1]);
+                $question->increment('Upvotes', 2); // Adjust the count accordingly
+            }
+        } else {
+            $question->votes()->create([
+                'user_id' => $user->id,
+                'vote_type' => 1
+            ]);
+            $question->upvote();
+        }
+    
         return redirect()->back()->with('success', 'Question upvoted successfully!');
     }
-
+    
     public function downvote($id)
     {
         $question = Question::findOrFail($id);
-        $question->downvote();
+        $user = Auth::user();
+    
+        $existingVote = $question->votes()->where('user_id', $user->id)->first();
+    
+        if ($existingVote) {
+            if ($existingVote->vote_type == 0) {
+                // User has already downvoted, so do nothing or optionally, remove the vote.
+                return redirect()->back()->with('error', 'You have already downvoted this question.');
+            } else {
+                // User has upvoted, switch to downvote
+                $existingVote->update(['vote_type' => 0]);
+                $question->decrement('Upvotes', 2); // Adjust the count accordingly
+            }
+        } else {
+            $question->votes()->create([
+                'user_id' => $user->id,
+                'vote_type' => 0
+            ]);
+            $question->downvote();
+        }
+    
         return redirect()->back()->with('success', 'Question downvoted successfully!');
-    }
+    }    
 
     public function filterByTag(Request $request)
     {

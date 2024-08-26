@@ -1,52 +1,61 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<head>
+    @vite('resources/css/login.css')
+    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets/login.css') }}" /> --}}
+</head>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-        </div>
+<h2>Dev Diaries By JIMS</h2>
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
+            <h1>Create Account</h1>
+            <span>using your assigned JIMS ID for registration</span>
+            <input type="text" name="name" placeholder="Name" />
+            <input type="email" name="email" placeholder="Email" />
+            <input type="password" name="password" placeholder="Password" />
+            <button type="submit">Sign Up</button>
+        </form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form method="POST" action="{{ route('login') }}">
+            @csrf
+			<h1>Sign in</h1>
+			<span>using your assigned Dev Diaries account</span>
+			<input type="email" name="email" placeholder="Email" />
+			<input type="password" name="password" placeholder="Password" />
+			<label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
+				<input type="checkbox" name="remember" style="margin-right: 5px;"> Remember Me
+			</label>
+			<a href="{{ route('password.request') }}"">Forgot your password?</a>
+			<button>Sign In</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>To keep connected with us please login with your personal information.</p>
+				<button class="ghost" id="signIn">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hi, there!</h1>
+				<p>Enter your personal details and come onboard with us.</p>
+				<button class="ghost" id="signUp">Sign Up</button>
+			</div>
+		</div>
+	</div>
+</div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+<script>
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+    signUpButton.addEventListener('click', () => {
+    	container.classList.add("right-panel-active");
+    });
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    signInButton.addEventListener('click', () => {
+    	container.classList.remove("right-panel-active");
+    });
+</script>

@@ -6,9 +6,16 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/login.css',
                 'resources/js/app.js',
             ],
             refresh: true,
         }),
     ],
+    server: {
+        host: '192.168.1.18', // Use your server's IP address
+        hmr: {
+            host: '192.168.1.18', // Use the same IP address for HMR
+        },
+    },
 });
