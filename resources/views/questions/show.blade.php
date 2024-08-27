@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+<head>
+    @vite('resources/css/showQuestions.css')
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@700&family=Open+Sans:wght@600&family=Poppins:wght@400;600&family=Raleway:wght@600&display=swap"
+        rel="stylesheet">
+</head>
+
 @section('header')
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         {{ $question->Title }}
@@ -7,103 +14,106 @@
 @endsection
 
 @section('content')
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">
+    <main class="container">
+        <div class="question-box">
+            <div class="question-content">
                 <h3>{{ $question->Title }}</h3>
                 <p>{{ $question->Content }}</p>
-                <p>Asked by: <a style="color: #105aa3;" href="{{ route('profile.show', ['id' => $question->user_id]) }}">{{ $question->UserName }}</a></p>
+                <p>Asked by: <a class="user-link"
+                        href="{{ route('profile.show', ['id' => $question->user_id]) }}">{{ $question->UserName }}</a></p>
                 <p>Email: {{ $question->EmailId }}</p>
                 <p>Upvotes: {{ $question->Upvotes }}</p>
                 <p>Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
-
-                @if($question->Tags)
+                @if ($question->Tags)
                     @php
                         $tags = json_decode($question->Tags, true);
                     @endphp
                     <p>Tags: {{ implode(', ', $tags) }}</p>
                 @endif
-                <form action="{{ route('questions.upvote', $question->id) }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="bg-green-500 text-black px-4 py-2">Upvote</button>
-                </form>
+                <div class="  button-container">
+                    <form action="{{ route('questions.upvote', $question->id) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="btn upvote-btn"></button>
+                    </form>
 
-                <form action="{{ route('questions.downvote', $question->id) }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="bg-red-500 text-black px-4 py-2">Downvote</button>
-                </form>
+                    <form action="{{ route('questions.downvote', $question->id) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" class="btn downvote-btn"></button>
+                    </form>
 
-                <form action="{{ route('report.question', $question->id) }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="bg-red-500 text-black px-4 py-2">Report Question</button>
-                </form>
+                    <form action="{{ route('report.question', $question->id) }}" method="POST" class="inline">
+                        <button type="submit" class="btn report-btn"></button>
+                    </form>
 
-                @if(Auth::user()->role === "admin")
-                <form action="{{ route('questions.destroy', $question->id) }}" method="POST" class="inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="bg-red-700 text-black px-4 py-2">Delete Question</button>
-                </form>
-                @endif
+                    @if (Auth::user()->role === 'admin')
+                        <form action="{{ route('questions.destroy', $question->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn delete-btn"></button>
+                        </form>
+                    @endif
+                </div>
             </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
-            <div class="p-6 text-gray-900">
-                <h4>Replies:</h4>
+        <div class="question-box">
+            <div class="question-content">
+                <h3>Replies:</h3>
                 @forelse($question->replies as $reply)
-                <div class="border-t border-gray-200 mt-4">
-                    <p>{{ $reply->Content }}</p>
-                    <p>Replied by: <a style="color: #105aa3;" href="{{ route('profile.show', ['id' => $reply->user_id]) }}">{{ $reply->UserName }}</a></p>
-                    <p>Email: {{ $reply->EmailId }}</p>                    
-                    <p>Upvotes: {{ $reply->Upvotes }}</p>
-                    <p>Created at: {{ $reply->created_at->diffForHumans() }}</p>
-                    
+                    <div class="border-t border-gray-200 mt-4">
+                        <h3>{{ $reply->Content }}</h3>
+                <p>{{ $question->Content }}</p>
+                <p>Asked by: <a class="user-link"
+                        href="{{ route('profile.show', ['id' => $reply->user_id]) }}">{{ $reply->UserName }}</a></p>
+                <p>Email: {{ $reply->EmailId }}</p>
+                <p>Upvotes: {{ $reply->Upvotes }}</p>
+                <p>Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
+                <p>Created at: {{ $reply->created_at->diffForHumans() }}</p>
+                <div class="  button-container">
                     <form action="{{ route('replies.upvote', $reply->id) }}" method="POST" class="inline">
                         @csrf
-                        <button type="submit" class="bg-green-500 text-gray px-4 py-2">Upvote</button>
+                        <button type="submit" class="btn upvote-btn"></button>
                     </form>
-            
+
                     <form action="{{ route('replies.downvote', $reply->id) }}" method="POST" class="inline">
                         @csrf
-                        <button type="submit" class="bg-red-500 text-black px-4 py-2">Downvote</button>
+                        <button type="submit" class="btn downvote-btn"></button>
                     </form>
 
                     <form action="{{ route('report.reply', $reply->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-red-500 text-black px-4 py-2">Report Reply</button>
+                        <button type="submit" class="btn report-btn"></button>
                     </form>
 
-                    @if(Auth::user()->role === "admin")
-                    <form action="{{ route('replies.destroy', $reply->id) }}" method="POST" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="bg-red-700 text-black px-4 py-2">Delete Reply</button>
-                    </form>
-                @endif
-                    
-                </div>
-            @empty
-                <p>No replies yet.</p>
-            @endforelse
-            
-                </div>
-            </div>
+                    @if (Auth::user()->role === 'admin')
+                        <form action="{{ route('replies.destroy', $reply->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn delete-btn"></button>
+                        </form>
+                    @endif
 
-            <br>
-            {{-- replies form --}}
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-6">
-                 <div class="mt-6">
-                    <h4>Reply Here:</h4>
-                    <form action="{{ route('replies.store', $question->id) }}" method="POST">
-                        @csrf
-                        <div class="mt-2">
-                            <label for="Content">Reply:</label>
-                            <textarea id="Content" name="Content" class="border p-2" rows="4" required></textarea>
-                        </div>
-                        <button type="submit" class="mt-4 px-4 py-2">Submit Reply</button>
-                    </form>
-                </div>
+                    </div>
+                @empty
+                    <p>No replies yet.</p>
+                @endforelse
+
             </div>
         </div>
-@endsection
+
+        <br>
+        {{-- replies form --}}
+        <div class="reply-form-box">
+            <div class="reply-form">
+                <h4>Reply Here:</h4>
+                <form action="{{ route('replies.store', $question->id) }}" method="POST">
+                    @csrf
+                    <div class="form-group">
+                        <label for="Content">Reply:</label>
+                        <textarea id="Content" name="Content" class="input-text" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn submit-btn">Submit Reply</button>
+                </form>
+            </div>
+        </div>
+    </main>
+    @endsection

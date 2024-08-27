@@ -4,117 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Post</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            color: #212529;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        .container {
-            max-width: 600px;
-            width: 95%;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+        color: #000000;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+    }
 
-        h1 {
-            color: #343a40;
-            margin-bottom: 20px;
-            font-size: 24px;
-            text-align: center;
-        }
+    .background {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: -1;
+    }
 
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+    .background .shape {
+        height: 280px;
+        width: 280px;
+        position: absolute;
+        border-radius: 50%;
+    }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+    .shape:first-child {
+        background: linear-gradient(#df2550, #d75271);
+        left: 200px;
+        top: 30px;
+    }
 
-        input[type="text"],
-        textarea {
-            width: 95%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
+    .shape:last-child {
+        background: linear-gradient(to right, #ea1647, #d75271);
+        right: 300px;
+        bottom: 35px;
+    }
 
-        textarea {
-            resize: vertical;
-            height: 150px;
-        }
+    .container {
+        width: 55%;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 15px;
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+        padding: 40px 35px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
 
-        .tags {
-            margin: 20px 0;
-        }
+    .container h3 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        color: #000000;
+    }
 
-        .tags h4 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #495057;
-        }
+    .success-message {
+        color: green;
+        margin-bottom: 15px;
+        text-align: center;
+    }
 
-        .tags div {
-            margin-bottom: 10px;
-        }
+    label {
+        display: block;
+        margin-top: 15px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #000000;
+        text-align: left;
+    }
 
-        .tags input[type="checkbox"] {
-            margin-right: 8px;
-        }
+    input[type="text"],
+    textarea {
+        width: 100%;
+        height: 45px;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 8px;
+        font-size: 14px;
+        font-weight: 300;
+        color: #000000;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
 
-        .custom-tag-input {
-            margin-top: 10px;
-            margin-bottom: 20px;
-        }
+    textarea {
+        height: 100px;
+        resize: vertical;
+    }
 
-        button {
-            padding: 10px 15px;
-            font-size: 16px;
-            color: #ffffff;
-            background-color: #007bff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
-            align-self: center;
-            margin-right: 10px;
-        }
+    ::placeholder {
+        color: #f43232;
+    }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+    .tags {
+        margin: 20px 0;
+        text-align: left;
+    }
 
-        .cancel-button {
-            background-color: #ba2020;
-        }
+    .tags h4 {
+        margin-bottom: 10px;
+        font-size: 16px;
+        color: #000000;
+    }
 
-        .cancel-button:hover {
-            background-color: #b82f2f;
-        }
+    .tags div {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
 
-        .success-message {
-            color: green;
-            margin-bottom: 15px;
-            text-align: center;
-        }
+    .tags input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    .custom-tag-input input {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    button {
+        width: 100%;
+        background-color: #ffffff;
+        color: #080806;
+        padding: 12px 0;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    button:hover {
+        background-color: #dfdfdf;
+    }
+
+    .cancel-button {
+        background-color: #ba2020;
+        color: #ffffff;
+    }
+
+    .cancel-button:hover {
+        background-color: #a81c1c;
+    }
+
     </style>
 </head>
 <body>
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
     <div class="container">
-        <h1>Create a New Post</h1>
+        <h3>Create a New Post</h3>
 
         @if(session('success'))
             <p class="success-message">{{ session('success') }}</p>
@@ -123,10 +193,10 @@
         <form action="{{ route('questions.store') }}" method="POST">
             @csrf
             <label for="Title">Title:</label>
-            <input type="text" id="Title" name="Title">
+            <input type="text" id="Title" name="Title" placeholder="Enter the title">
 
             <label for="Content">Content:</label>
-            <textarea id="Content" name="Content"></textarea>
+            <textarea id="Content" name="Content" placeholder="Write your content here"></textarea>
 
             <div class="tags">
                 <h4>Select Tags:</h4>
@@ -143,11 +213,11 @@
 
                 <div class="custom-tag-input">
                     <label for="custom-tags">Or add custom tags (comma-separated):</label>
-                    <input type="text" id="custom-tags" name="custom_tags" placeholder="e.g. DSA,DBMS">
+                    <input type="text" id="custom-tags" name="custom_tags" placeholder="e.g. DSA, DBMS">
                 </div>
             </div>
 
-            <div style="text-align: center;">
+            <div class="button-group">
                 <button type="submit">Create Post</button>
                 <button type="button" class="cancel-button" onclick="window.location.href='{{ route('questions.index') }}'">Cancel</button>
             </div>
