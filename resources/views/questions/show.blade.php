@@ -21,7 +21,6 @@
                 <p>{{ $question->Content }}</p>
                 <p>Asked by: <a class="user-link"
                         href="{{ route('profile.show', ['id' => $question->user_id]) }}">{{ $question->UserName }}</a></p>
-                <p>Email: {{ $question->EmailId }}</p>
                 <p>Upvotes: {{ $question->Upvotes }}</p>
                 <p>Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
                 @if ($question->Tags)
@@ -61,40 +60,39 @@
                 <h3>Replies:</h3>
                 @forelse($question->replies as $reply)
                     <div class="border-t border-gray-200 mt-4">
-                        <h3>{{ $reply->Content }}</h3>
-                <p>{{ $question->Content }}</p>
-                <p>Asked by: <a class="user-link"
-                        href="{{ route('profile.show', ['id' => $reply->user_id]) }}">{{ $reply->UserName }}</a></p>
-                <p>Email: {{ $reply->EmailId }}</p>
-                <p>Upvotes: {{ $reply->Upvotes }}</p>
-                <p>Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
-                <p>Created at: {{ $reply->created_at->diffForHumans() }}</p>
-                <div class="  button-container">
-                    <form action="{{ route('replies.upvote', $reply->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="btn upvote-btn"></button>
-                    </form>
+                        <p>Asked by: <a class="user-link"
+                                href="{{ route('profile.show', ['id' => $reply->user_id]) }}">{{ $reply->UserName }}</a>
+                        </p>
+                        <p>Upvotes: {{ $reply->Upvotes }}</p>
+                        <p>Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
+                        <p>Created at: {{ $reply->created_at->diffForHumans() }}</p>
+                        <div class="  button-container">
+                            <form action="{{ route('replies.upvote', $reply->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="btn upvote-btn"></button>
+                            </form>
 
-                    <form action="{{ route('replies.downvote', $reply->id) }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="btn downvote-btn"></button>
-                    </form>
+                            <form action="{{ route('replies.downvote', $reply->id) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="btn downvote-btn"></button>
+                            </form>
 
-                    <form action="{{ route('report.reply', $reply->id) }}" method="POST" class="inline">
-                        <button type="submit" class="btn report-btn"></button>
-                    </form>
+                            <form action="{{ route('report.reply', $reply->id) }}" method="POST" class="inline">
+                                <button type="submit" class="btn report-btn"></button>
+                            </form>
 
-                    @if (Auth::user()->role === 'admin')
-                        <form action="{{ route('replies.destroy', $reply->id) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn delete-btn"></button>
-                        </form>
-                    @endif
-
-                    </div>
-                @empty
-                    <p>No replies yet.</p>
+                            @if (Auth::user()->role === 'admin')
+                                <form action="{{ route('replies.destroy', $reply->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn delete-btn"></button>
+                                </form>
+                                @endif
+                            </div>
+                            <pre>{{ $reply->Content }}</pre>
+                        </div>
+                    @empty
+                        <p>No replies yet.</p>
                 @endforelse
 
             </div>
@@ -116,4 +114,4 @@
             </div>
         </div>
     </main>
-    @endsection
+@endsection

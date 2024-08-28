@@ -41,12 +41,12 @@ header h2 {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.question-box:hover,
+/* .question-box:hover,
 .replies-box:hover,
 .reply-form-box:hover {
     transform: scale(1.03);
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-}
+} */
 
 .question-content,
 .replies-content,
@@ -67,11 +67,6 @@ h4 {
     letter-spacing: 1px;
     text-transform: capitalize;
     transition: color 0.3s ease, transform 0.3s ease;
-}
-
-h3:hover {
-    color: #1e40af;
-    transform: scale(1.05) translateY(-5px);
 }
 
 p {
@@ -99,9 +94,8 @@ p:hover {
     font-family: "Lobster", cursive;
 }
 
-.user-link:hover {
-    color: #1e40af;
-    text-decoration: underline;
+textarea {
+    white-space: pre-warp;
 }
 
 .btn {
