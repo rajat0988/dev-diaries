@@ -36,7 +36,7 @@
         text-shadow: rgba(0, 0, 0, .3) 1px 1px 1px;
         transition: all .2s ease-in-out;
         user-select: none;
-        width: 100%;
+        width: 80%;
         border: 0;
     }
 
@@ -51,8 +51,12 @@
     }
 </style>
 
+<a href="{{ route('questions.create') }}" style="display: block; margin: 0 auto; width: fit-content;" class="button-44">
+    <span>
+        Hi, there. Want to ask a question?
+    </span>
+</a>
 <div class="relative text-gray-600 mt-8 lg:mr-16">
-    <a href="{{ route('questions.create') }}" class="button-44">Hi, there. Want to ask a question?</a>
     <br>
 
     @if (Auth::user()->role === 'admin')
@@ -140,7 +144,7 @@ Answered: {{ $question->Answered ? 'Yes' : 'No' }}
                             {{ $filtered_questions->appends(['tags' => $selectedTags])->links() }}
                         @endif
 
-                        <h3 class="text-2xl text-blue-500 mt-8 mb-4">Recent Questions</h3>
+                        <h3 class="text-2xl text-orange-700 mt-8 mb-4">Recent Questions</h3>
                         @foreach ($all_questions as $question)
                             <div class="item px-6 py-6" x-data="{ isOpen: false }">
                                 <div class="flex items-center justify-between cursor-pointer"

@@ -18,7 +18,7 @@
         <div class="question-box">
             <div class="question-content">
                 <h3>{{ $question->Title }}</h3>
-                <p>{{ $question->Content }}</p>
+                <pre>{{ $question->Content }}</pre>
                 <p>Asked by: <a class="user-link"
                         href="{{ route('profile.show', ['id' => $question->user_id]) }}">{{ $question->UserName }}</a></p>
                 <p>Upvotes: {{ $question->Upvotes }}</p>

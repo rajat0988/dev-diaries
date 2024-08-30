@@ -16,6 +16,7 @@
 
     body {
         font-family: 'Poppins', sans-serif;
+        height: 80vh;
         background-color: #f8f9fa;
         color: #000000;
         margin: 0;
@@ -111,6 +112,7 @@
     textarea {
         height: 100px;
         resize: vertical;
+        white-space:pre-wrap;
     }
 
     ::placeholder {
