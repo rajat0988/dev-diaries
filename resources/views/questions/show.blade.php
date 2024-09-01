@@ -15,6 +15,17 @@
 
 @section('content')
     <main class="container">
+        <aside class="sidebar">
+          <h4>Recent Questions</h4>
+          <ul>
+            @foreach ($recent_questions as $ques)
+                <li>
+                    <a href="{{ route('questions.show', $ques->id) }}" class="font-semibold">{{ $ques->Title }}</a>
+                </li>
+            @endforeach
+          </ul>
+          {{ $recent_questions->links() }}
+        </aside>
         <div class="question-box">
             <div class="question-content">
                 <h3>{{ $question->Title }}</h3>
@@ -41,6 +52,7 @@
                     </form>
 
                     <form action="{{ route('report.question', $question->id) }}" method="POST" class="inline">
+                        @csrf
                         <button type="submit" class="btn report-btn"></button>
                     </form>
 
@@ -78,6 +90,7 @@
                             </form>
 
                             <form action="{{ route('report.reply', $reply->id) }}" method="POST" class="inline">
+                               @csrf
                                 <button type="submit" class="btn report-btn"></button>
                             </form>
 
@@ -114,4 +127,12 @@
             </div>
         </div>
     </main>
+    {{-- <script>
+        var main = document.querySelector(".container")
+        var c = document.querySelector(".cursor")
+        main.addEventListener("mousemove", function (dets) {
+        c.style.left = dets.x + "px"
+        c.style.top = dets.y + "px"
+        })
+    </script> --}}
 @endsection

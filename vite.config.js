@@ -14,10 +14,10 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    // server: {
-    //     host: '192.168.1.18', // Use your server's IP address
-    //     hmr: {
-    //         host: '192.168.1.18', // Use the same IP address for HMR
-    //     },
-    // },
+    server: {
+        host: '192.168.1.18', // Use your server's IP address
+        hmr: {
+            host: '192.168.1.18', // Use the same IP address for HMR
+        },
+    },
 });

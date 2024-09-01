@@ -42,7 +42,6 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-
         return redirect()->route('register');
         // return redirect()->route('verification.notice');
     }

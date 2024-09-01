@@ -4,6 +4,7 @@
     </IfModule>
 
     RewriteEngine On
+    AllowEncodedSlashes NoDecode
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

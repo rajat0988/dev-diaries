@@ -18,6 +18,42 @@ class Reply extends Model
         'Upvotes'
     ];
 
+    function sanitizeContent($content)
+    {
+        $replacements = [
+            '<' => '&lt;',
+            '>' => '&gt;',
+            '{' => '&lcub;',  // Using HTML entity for left curly brace
+            '}' => '&rcub;',  // Using HTML entity for right curly brace
+        ];
+
+        return strtr($content, $replacements);
+    }
+
+    function desanitizeContent($content)
+    {
+        $replacements = [
+            '&lt;' => '<',
+            '&gt;' => '>',
+            '&lcub;' => '{',
+            '&rcub;' => '}',
+        ];
+
+        return strtr($content, $replacements);
+    }
+
+    // Mutator to sanitize content before saving
+    public function setContentAttribute($value)
+    {
+        $this->attributes['Content'] = self::sanitizeContent($value);
+    }
+
+    // Accessor to desanitize content when retrieving
+    public function getContentAttribute($value)
+    {
+        return self::desanitizeContent($value);
+    }
+
     public function votes()
     {
         return $this->morphMany(Vote::class, 'votable');
@@ -37,7 +73,7 @@ class Reply extends Model
     // Define the inverse relationship with the Question model
     public function question()
     {
-        return $this->belongsTo(Question::class,'question_id');
+        return $this->belongsTo(Question::class, 'question_id');
     }
 
     public function user()

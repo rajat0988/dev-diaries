@@ -70,7 +70,8 @@ class QuestionController extends Controller
     public function show($id)
     {
         $question = Question::with('replies')->findOrFail($id);
-        return view('questions.show', compact('question'));
+        $recent_questions = Question::orderBy('created_at', 'desc')->paginate(4);
+        return view('questions.show', compact('question','recent_questions'));
     }
 
     public function upvote($id)

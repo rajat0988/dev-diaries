@@ -4,24 +4,26 @@ body {
     color: #333;
     margin: 0;
     padding: 0;
-    animation: fadeIn 1.5s ease-in-out;
 }
 
-.container {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #ffffff;
-    border-radius: 15px;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    border: 1px solid #e2e8f0;
+.cursor {
+    border-radius: 80%;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    z-index: 2;
+    transition: all linear 0.2s;
+    mix-blend-mode: difference;
+    opacity: 0.9;
+    filter: blur(50px);
+    background-color: #f43232;
 }
 
 header h2 {
     font-size: 36px;
     text-align: center;
     margin-bottom: 30px;
-    color: #2b6cb0;
+    color: #f43232;
     text-transform: uppercase;
     letter-spacing: 3px;
     animation: slideDown 1s ease-out;
@@ -33,20 +35,23 @@ header h2 {
 .replies-box,
 .reply-form-box {
     background-color: #ffffff;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    padding: 20px;
     border-radius: 15px;
-    margin-bottom: 30px;
-    padding: 25px;
-    transform: scale(1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 15px auto;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 1200px;
+    transition: transform 0.3s ease;
+    word-wrap: break-word; /* Ensure wrapping for all text content */
+    overflow-wrap: break-word; /* Break long words if needed */
 }
 
-/* .question-box:hover,
+.question-box:hover,
 .replies-box:hover,
 .reply-form-box:hover {
-    transform: scale(1.03);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-} */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    transform: scale(1.01);
+}
 
 .question-content,
 .replies-content,
@@ -63,10 +68,15 @@ h4 {
     animation: slideInLeft 1s ease;
     font-family: "Raleway", sans-serif;
     font-weight: 700;
-    color: #2b6cb0;
+    color: #f43232;
     letter-spacing: 1px;
     text-transform: capitalize;
     transition: color 0.3s ease, transform 0.3s ease;
+}
+
+h3:hover {
+    color: #df2550;
+    transform: scale(1.05) translateY(-5px);
 }
 
 p {
@@ -88,14 +98,15 @@ p:hover {
 }
 
 .user-link {
-    color: #2b6cb0;
+    color: #f43232;
     text-decoration: none;
     transition: color 0.3s ease;
     font-family: "Lobster", cursive;
 }
 
-textarea {
-    white-space: pre-warp;
+.user-link:hover {
+    color: #df2550;
+    text-decoration: underline;
 }
 
 .btn {
@@ -138,7 +149,7 @@ textarea {
 }
 
 .upvote-btn {
-    background-image: url("https://www.shutterstock.com/image-vector/thumbs-up-upvote-vector-icon-260nw-498802993.jpg");
+    background-image: url("https://cdn3.iconfinder.com/data/icons/basicolor-votting-awards/24/210_vote_like_up_upvote-512.png");
 }
 
 .downvote-btn {
@@ -153,50 +164,117 @@ textarea {
     background-image: url("https://www.shutterstock.com/image-vector/delete-icongarbage-trash-can-rubbish-260nw-1211550652.jpg");
 }
 
-.form-group {
-    margin-bottom: 25px;
-    animation: fadeInUp 1s ease;
+.delete-btn:hover,
+.upvote-btn:hover,
+.report-btn:hover,
+.downvote-btn:hover {
+    transform: scale(1.3);
 }
 
-.input-text {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    transition: border-color 0.3s ease;
+.sidebar {
+    width: 220px;
+    padding: 20px;
+    background: linear-gradient(to right, #ee5a6f, #f29263);
+    color: #333;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    position: fixed;
+    top: 115px;
+    left: 20px;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+}
+
+.sidebar h4 {
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: #f7fafc;
+    font-family: "Montserrat", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #ffffff50;
+    padding-bottom: 10px;
+    animation: slideInLeft 1s ease;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.sidebar ul li a {
+    color: #f7fafc;
+    text-decoration: none;
     font-family: "Poppins", sans-serif;
-    font-size: 15px;
-}
-
-.input-text:focus {
-    border-color: #2b6cb0;
-    outline: none;
-}
-
-.submit-btn {
-    background-color: #2b6cb0;
-    color: white;
-    padding: 14px 28px;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-family: "Open Sans", sans-serif;
-    font-size: 15px;
     font-weight: 600;
+    font-size: 16px;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.submit-btn:hover {
-    background-color: #1e40af;
-    transform: translateY(-2px);
+.sidebar ul li a:hover {
+    background-color: #1b61e337;
+    transform: translateX(5px);
+}
+
+.sidebar ul li a::before {
+    content: "› ";
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.sidebar ul li a:active {
+    transform: translateX(0);
+    background: linear-gradient(to right, #ee5a6f, #f29263);
+}
+
+.container {
+    margin-left: calc(220px + 20px);
+    padding: 30px;
+    max-width: calc(100% - (220px + 40px));
+    background-color: #ffffff;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid #e2e8f0;
+    position: relative;
+    border-radius: 15px;
+    top: 10px;
+    overflow-y: auto;
+    height: calc(100vh - 120px);
+    box-sizing: border-box;
+    word-wrap: break-word; /* Ensure wrapping for all text content */
+    overflow-wrap: break-word; /* Break long words if needed */
+}
+
+.container::-webkit-scrollbar {
+    display: none;
+}
+
+.reply-form-box {
+    margin-top: 30px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.reply-form {
+    margin-top: 20px;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
+        transform: translateY(20px);
     }
-
     to {
         opacity: 1;
+        transform: translateY(0);
     }
 }
 
@@ -205,33 +283,47 @@ textarea {
         opacity: 0;
         transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
     }
 }
 
 @keyframes slideInLeft {
     from {
-        transform: translateX(-50px);
+        transform: translateX(-20px);
         opacity: 0;
     }
-
     to {
         transform: translateX(0);
         opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .question-content pre,
+    .replies-content pre {
+        white-space: pre-wrap; /* Ensure wrapping for preformatted text */
+        word-wrap: break-word; /* Break long words */
+        overflow-wrap: break-word;
+    }
+
+    .container,
+    .question-box,
+    .replies-box,
+    .reply-form-box {
+        padding: 10px;
+        width: 100%;
+        word-wrap: break-word; /* Prevent overflow */
+        overflow-wrap: break-word;
+    }
+
+    .sidebar {
+        display: none; /* Hide sidebar on small screens */
+    }
+
+    .container {
+        margin-left: 0;
+        max-width: 100%;
     }
 }

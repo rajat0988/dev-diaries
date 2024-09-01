@@ -14,199 +14,174 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@600&display=swap" rel="stylesheet">
 </head>
+
 <style>
     * {
         font-family: 'Quicksand', sans-serif;
     }
 
-    .button-44 {
-        background: #e62143;
-        border-radius: 11px;
-        box-sizing: border-box;
-        color: #fff;
-        cursor: pointer;
-        display: flex;
-        font-family: 'Quicksand', sans-serif;
-        font-size: 1.15em;
-        font-weight: 700;
-        justify-content: center;
-        line-height: 33.4929px;
-        padding: .8em 1em;
+    body {
+        background-color: #f9fafb;
+        color: #333;
+    }
+
+    .button-primary {
+        background-color: #e62143;
+        border-radius: 10px;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        color: white;
+        font-weight: bold;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .button-primary:hover {
+        background-color: #d11a39;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    .heading {
+        font-size: 2rem;
+        font-weight: bold;
         text-align: center;
-        text-shadow: rgba(0, 0, 0, .3) 1px 1px 1px;
-        transition: all .2s ease-in-out;
-        user-select: none;
-        width: 80%;
-        border: 0;
+        margin-bottom: 2rem;
     }
 
-    .button-44:hover {
-        background: #d11a39;
+    .card {
+        background-color: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
     }
 
-    .button-44:active,
-    .button-44:focus {
-        box-shadow: rgba(0, 0, 0, .3) 0 3px 3px inset;
-        outline: 0;
+    .filters {
+        background-color: #f1f1f1;
+        padding: 1rem;
+        border-radius: 0.75rem;
+        margin-bottom: 2rem;
     }
 </style>
 
-<a href="{{ route('questions.create') }}" style="display: block; margin: 0 auto; width: fit-content;" class="button-44">
-    <span>
-        Hi, there. Want to ask a question?
-    </span>
-</a>
-<div class="relative text-gray-600 mt-8 lg:mr-16">
-    <br>
+<body>
 
-    @if (Auth::user()->role === 'admin')
-        <a href="{{ route('admin.reported') }}" class="button-44">View Reported</a>
-        <br><br>
-    @endif
-</div>
+    <div class="container">
+        <!-- Page Title -->
+        <h1 class="heading">Dev Diaries</h1>
 
-<article id="the-article">
-    <div class="mx-auto max-w-6xl">
-        <div class="p-2 rounded">
-            <div class="flex flex-col md:flex-row">
-                <div class="md:w-1/3 p-4 text-sm">
-                    <div class="sticky inset-x-0 top-0 left-0 py-12">
-                        <div class="mb-2">Apply Filters:</div>
-                        <div class="text-xs text-gray-600">
-                            {{-- filters --}}
-                            <div class="box">
-                                <h2>Apply filters:</h2>
-                                <form action="{{ route('questions.filter') }}" method="GET" class="mb-4">
-                                    @if (isset($tagsToShow))
-                                        <div>
-                                            <h2>All Tags</h2>
-                                            @foreach ($tagsToShow as $tag)
-                                                <label class="block mb-2">
-                                                    <input type="checkbox" name="tags[]"
-                                                        value="{{ $tag }}"
-                                                        @if (is_array(request('tags')) && in_array($tag, request('tags'))) checked @endif>
-                                                    {{ $tag }}
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                    @else
-                                        <div>
-                                            <h3>Filter by Tags</h3>
-                                            @foreach ($mostUsedTags as $tag)
-                                                <label class="block mb-2">
-                                                    <input type="checkbox" name="tags[]"
-                                                        value="{{ $tag }}"
-                                                        @if (is_array(request('tags')) && in_array($tag, request('tags'))) checked @endif>
-                                                    {{ $tag }}
-                                                </label>
-                                            @endforeach
-                                        </div>
-                                    @endif
-                                    <button type="submit" class="btn btn-primary">Filter</button>
-                                </form>
-                                <a href="{{ route('questions.loadMoreTags') }}" class="btn btn-primary">Load More
-                                    Tags</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="md:w-2/3 py-12">
-                    <div class="p-4">
-                        @if(isset($selectedTags) && !empty($selectedTags))
-                            <h3 class="text-2xl text-blue-500 mb-4">Filtered Questions</h3>
-                            @forelse($filtered_questions as $question)
-                                <div class="item px-6 py-6" x-data="{ isOpen: false }">
-                                    <div class="flex items-center justify-between cursor-pointer"
-                                         @click="isOpen = !isOpen; window.location.href = '{{ route('questions.show', $question->id) }}'">
-                                        <h4 :class="{ 'text-green-400 font-medium': isOpen }">
-                                            {{ $question->Title }}
-                                        </h4>
-                                        <svg @click.stop="isOpen = !isOpen"
-                                            :class="{ 'transform rotate-180': isOpen }"
-                                            class="w-5 h-5 text-gray-500" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                            stroke="currentColor">
-                                            <path d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </div>
-                                    <div x-show="isOpen" @click.away="isOpen = false" class="mt-3"
-                                        :class="{ 'text-gray-600': isOpen }">
-                                        <pre>
-{{ $question->Upvotes >= 0 ? 'Upvotes: ' . $question->Upvotes : 'Downvotes: ' . -1 * $question->Upvotes }}
-Answered: {{ $question->Answered ? 'Yes' : 'No' }}
-                                        </pre>
-                                    </div>
-                                </div>
-                            @empty
-                                <p>No questions match the selected tags.</p>
-                            @endforelse
-                            {{ $filtered_questions->appends(['tags' => $selectedTags])->links() }}
-                        @endif
-
-                        <h3 class="text-2xl text-orange-700 mt-8 mb-4">Recent Questions</h3>
-                        @foreach ($all_questions as $question)
-                            <div class="item px-6 py-6" x-data="{ isOpen: false }">
-                                <div class="flex items-center justify-between cursor-pointer"
-                                     @click="isOpen = !isOpen; window.location.href = '{{ route('questions.show', $question->id) }}'">
-                                    <h4 :class="{ 'text-green-400 font-medium': isOpen }">
-                                        {{ $question->Title }}
-                                    </h4>
-                                    <svg @click.stop="isOpen = !isOpen"
-                                        :class="{ 'transform rotate-180': isOpen }"
-                                        class="w-5 h-5 text-gray-500" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
-                                <div x-show="isOpen" @click.away="isOpen = false" class="mt-3"
-                                    :class="{ 'text-gray-600': isOpen }">
-                                    <pre>
-{{ $question->Upvotes >= 0 ? 'Upvotes: ' . $question->Upvotes : 'Downvotes: ' . -1 * $question->Upvotes }}
-Answered: {{ $question->Answered ? 'Yes' : 'No' }}
-                                    </pre>
-                                </div>
-                            </div>
-                        @endforeach
-                        {{ $all_questions->links() }}
-                    </div>
-                </div>
-            </div>
+        <!-- Button: Ask a Question -->
+        <div class="text-center mb-6">
+            <a href="{{ route('questions.create') }}" class="button-primary">
+                Ask a Question
+            </a>
         </div>
+
+        <!-- Admin View: Reported Questions -->
+        @if (Auth::user()->role === 'admin')
+            <div class="text-center mb-6">
+                <a href="{{ route('admin.reported') }}" class="button-primary">View Reported Questions</a>
+            </div>
+        @endif
+
+        <!-- Filter Section -->
+        <div class="filters">
+            <h2 class="text-lg font-semibold mb-4">Apply Filters</h2>
+            <form action="{{ route('questions.filter') }}" method="GET">
+                @if (isset($tagsToShow))
+                    <div>
+                        <h3 class="text-base font-semibold mb-2">All Tags</h3>
+                        @foreach ($tagsToShow as $tag)
+                            <label class="block mb-2">
+                                <input type="checkbox" name="tags[]" value="{{ $tag }}"
+                                    @if (is_array(request('tags')) && in_array($tag, request('tags'))) checked @endif>
+                                {{ $tag }}
+                            </label>
+                        @endforeach
+                    </div>
+                @else
+                    <div>
+                        <h3 class="text-base font-semibold mb-2">Most Used Tags</h3>
+                        @foreach ($mostUsedTags as $tag)
+                            <label class="block mb-2">
+                                <input type="checkbox" name="tags[]" value="{{ $tag }}"
+                                    @if (is_array(request('tags')) && in_array($tag, request('tags'))) checked @endif>
+                                {{ $tag }}
+                            </label>
+                        @endforeach
+                    </div>
+                @endif
+                <button type="submit" class="button-primary mt-4">Filter</button>
+            </form>
+            <a href="{{ route('questions.loadMoreTags') }}" class="button-primary mt-4 inline-block">Load More Tags</a>
+        </div>
+
+        <!-- Filtered Questions -->
+        @if (isset($selectedTags) && !empty($selectedTags))
+            <h2 class="text-xl text-blue-500 mb-4">Filtered Questions</h2>
+            @forelse($filtered_questions as $question)
+                <div class="card">
+                    <div class="flex justify-between items-center cursor-pointer"
+                        @click="window.location.href = '{{ route('questions.show', $question->id) }}'">
+                        <h3 class="font-semibold">{{ $question->Title }}</h3>
+                        <div class="text-gray-500">{{ $question->Upvotes >= 0 ? 'Upvotes: ' . $question->Upvotes : 'Downvotes: ' . -$question->Upvotes }}</div>
+                    </div>
+                    <p class="mt-2 text-gray-600">Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
+                </div>
+            @empty
+                <p>No questions match the selected tags.</p>
+            @endforelse
+            {{ $filtered_questions->appends(['tags' => $selectedTags])->links() }}
+        @endif
+
+        <!-- Recent Questions -->
+        <h2 class="text-xl text-orange-700 mt-8 mb-4">Recent Questions</h2>
+        @foreach ($all_questions as $question)
+            <div class="card">
+                <div class="flex justify-between items-center cursor-pointer">
+                    <a href="{{ route('questions.show', $question->id) }}" class="font-semibold"> <h3>{{ $question->Title }}</h3></a>
+                    <div class="text-gray-500">{{ $question->Upvotes >= 0 ? 'Upvotes: ' . $question->Upvotes : 'Downvotes: ' . -$question->Upvotes }}</div>
+                </div>
+                <p class="mt-2 text-gray-600">Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
+            </div>
+        @endforeach
+        {{ $all_questions->links() }}
     </div>
-</article>
 
-<div x-data="scrollHandler(document.getElementById('the-article'))" x-cloak aria-hidden="true"
-    @scroll.window="calculateHeight(window.scrollY)"
-    class="fixed h-screen w-1 hover:bg-gray-200 top-0 left-0 bg-gray-300">
-    <div :style="`max-height:${height}%`" class="h-full bg-green-400"></div>
-</div>
+    <!-- Progress Scrollbar -->
+    <div x-data="scrollHandler(document.getElementById('the-article'))" x-cloak aria-hidden="true" 
+        @scroll.window="calculateHeight(window.scrollY)"
+        class="fixed h-screen w-1 top-0 left-0 bg-gray-300">
+        <div :style="`max-height:${height}%`" class="h-full bg-green-400"></div>
+    </div>
 
-<div id="alpine-devtools" x-data="devtools()" x-show="alpines.length" x-init="start()">
-</div>
-
-<script>
-    function scrollHandler(element = null) {
-        return {
-            height: 0,
-            element: element,
-            calculateHeight(position) {
-                const distanceFromTop = this.element.offsetTop;
-                const contentHeight = this.element.clientHeight;
-                const visibleContent = contentHeight - window.innerHeight;
-                const start = Math.max(0, position - distanceFromTop);
-                const percent = (start / visibleContent) * 100;
-                requestAnimationFrame(() => {
-                    this.height = percent;
-                });
-            },
-            init() {
-                this.element = this.element || document.body;
-                this.calculateHeight(window.scrollY);
-            }
-        };
-    }
-</script>
+    <!-- Alpine.js Scroll Handler -->
+    <script>
+        function scrollHandler(element = null) {
+            return {
+                height: 0,
+                element: element,
+                calculateHeight(position) {
+                    const distanceFromTop = this.element.offsetTop;
+                    const contentHeight = this.element.clientHeight;
+                    const visibleContent = contentHeight - window.innerHeight;
+                    const start = Math.max(0, position - distanceFromTop);
+                    const percent = (start / visibleContent) * 100;
+                    requestAnimationFrame(() => {
+                        this.height = percent;
+                    });
+                },
+                init() {
+                    this.element = this.element || document.body;
+                    this.calculateHeight(window.scrollY);
+                }
+            };
+        }
+    </script>
+</body>
 
 @endsection

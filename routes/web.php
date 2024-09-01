@@ -2,13 +2,13 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
 
-use Illuminate\Http\Request;
 
 use App\Http\Middleware\AdminMiddleware;
 
@@ -54,7 +54,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::resource('questions', QuestionController::class);
 });
 
-Route::get('/email/verify', function () {
+
+Route::get('/email/verify',function(){
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
@@ -67,5 +68,6 @@ Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
 
 require __DIR__.'/auth.php';

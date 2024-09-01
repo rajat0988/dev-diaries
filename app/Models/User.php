@@ -2,14 +2,19 @@
 
 namespace App\Models;
 
+use App\Jobs\VerifyEmailJob;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
+    use MustVerifyEmailTrait;
+
 
     /**
      * The attributes that are mass assignable.
@@ -53,5 +58,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function replies()
     {
         return $this->hasMany(Reply::class, 'EmailId', 'email');
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        VerifyEmailJob::dispatch($this);
     }
 }
