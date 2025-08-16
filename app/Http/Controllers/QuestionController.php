@@ -78,9 +78,9 @@ class QuestionController extends Controller
     {
         $question = Question::findOrFail($id);
         $user = Auth::user();
-    
+
         $existingVote = $question->votes()->where('user_id', $user->id)->first();
-    
+
         if ($existingVote) {
             if ($existingVote->vote_type == 1) {
                 // User has already upvoted, so do nothing or optionally, remove the vote.
@@ -97,17 +97,17 @@ class QuestionController extends Controller
             ]);
             $question->upvote();
         }
-    
+
         return redirect()->back()->with('success', 'Question upvoted successfully!');
     }
-    
+
     public function downvote($id)
     {
         $question = Question::findOrFail($id);
         $user = Auth::user();
-    
+
         $existingVote = $question->votes()->where('user_id', $user->id)->first();
-    
+
         if ($existingVote) {
             if ($existingVote->vote_type == 0) {
                 // User has already downvoted, so do nothing or optionally, remove the vote.
@@ -124,9 +124,9 @@ class QuestionController extends Controller
             ]);
             $question->downvote();
         }
-    
+
         return redirect()->back()->with('success', 'Question downvoted successfully!');
-    }    
+    }
 
     public function filterByTag(Request $request)
     {

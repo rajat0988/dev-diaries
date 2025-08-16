@@ -20,10 +20,10 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/questions', [QuestionController::class, 'index'])->name('questions.index');
-    
+
     Route::get('/questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::post('/questions/create', [QuestionController::class, 'store'])->name('questions.store');
-    
+
     Route::get('/questions/show/{id}', [QuestionController::class, 'show'])->name('questions.show');
 
     Route::get('/questions/load-more-tags', [QuestionController::class, 'loadMoreTags'])->name('questions.loadMoreTags');
