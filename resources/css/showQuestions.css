@@ -1,329 +1,232 @@
+/* resources/css/showQuestions.css */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Importing fonts used across the site */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Spartan:wght@600&display=swap');
+
+/* Base Styles */
 body {
-    font-family: "Poppins", sans-serif;
-    background: linear-gradient(to right, #f0f4f8, #dce2e9);
+    font-family: 'Quicksand', sans-serif;
+    background-color: #f9fafb;
     color: #333;
-    margin: 0;
-    padding: 0;
 }
 
-.cursor {
-    border-radius: 80%;
-    height: 100px;
-    width: 100px;
-    position: absolute;
-    z-index: 2;
-    transition: all linear 0.2s;
-    mix-blend-mode: difference;
-    opacity: 0.9;
-    filter: blur(50px);
-    background-color: #f43232;
-}
-
-header h2 {
-    font-size: 36px;
-    text-align: center;
-    margin-bottom: 30px;
-    color: #f43232;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    animation: slideDown 1s ease-out;
-    font-family: "Montserrat", sans-serif;
-    font-weight: 700;
-}
-
-.question-box,
-.replies-box,
-.reply-form-box {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 15px;
-    margin: 15px auto;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 1200px;
-    transition: transform 0.3s ease;
-    word-wrap: break-word; /* Ensure wrapping for all text content */
-    overflow-wrap: break-word; /* Break long words if needed */
-}
-
-.question-box:hover,
-.replies-box:hover,
-.reply-form-box:hover {
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    transform: scale(1.01);
-}
-
-.question-content,
-.replies-content,
-.reply-form {
-    padding: 20px;
-    animation: fadeIn 1s ease-in-out;
-}
-
-h3,
-h4 {
-    font-size: 26px;
-    margin-bottom: 15px;
-    position: relative;
-    animation: slideInLeft 1s ease;
-    font-family: "Raleway", sans-serif;
-    font-weight: 700;
-    color: #f43232;
-    letter-spacing: 1px;
-    text-transform: capitalize;
-    transition: color 0.3s ease, transform 0.3s ease;
-}
-
-h3:hover {
-    color: #df2550;
-    transform: scale(1.05) translateY(-5px);
-}
-
-p {
-    margin: 20px 0;
-    line-height: 1.8;
-    color: #4a5568;
-    font-size: 18px;
-    font-family: "Georgia", serif;
-    font-weight: 400;
-    letter-spacing: 0.8px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease;
-}
-
-p:hover {
-    color: #2d3748;
-    transform: translateY(-2px);
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.user-link {
-    color: #f43232;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    font-family: "Lobster", cursive;
-}
-
-.user-link:hover {
-    color: #df2550;
-    text-decoration: underline;
-}
-
-.btn {
-    background-color: #f7fafc;
-    color: #333;
-    padding: 14px 22px;
+/* Primary button color from index page */
+.button-primary {
+    background-color: #e62143;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.2s ease-in-out;
     border: none;
-    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    font-family: "Open Sans", sans-serif;
-    font-size: 15px;
-    font-weight: 600;
 }
 
-.btn:hover {
-    background-color: #e2e8f0;
-    transform: translateY(-2px);
+.button-primary:hover {
+    background-color: #d11a39;
 }
 
-.button-container {
-    display: flex;
-    gap: 20px;
-    margin-top: 30px;
-    padding: 10px 0;
+/* Main Container */
+.question-container {
+    @apply max-w-6xl mx-auto px-4 py-8;
 }
 
-.upvote-btn,
-.downvote-btn,
-.report-btn,
-.delete-btn {
-    background-size: cover;
-    background-position: center;
-    border: none;
-    border-radius: 12px;
-    width: 70px;
-    height: 70px;
-    transition: transform 0.3s ease;
-}
-
-.upvote-btn {
-    background-image: url("https://cdn3.iconfinder.com/data/icons/basicolor-votting-awards/24/210_vote_like_up_upvote-512.png");
-}
-
-.downvote-btn {
-    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0xZbvMKf1jssP4WXkU33uNe8wc1mP7MSJdw&s");
-}
-
-.report-btn {
-    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkt51_2SLxa9-Q0A5_RIkLMJk9PzmNfi7MHA&s");
-}
-
-.delete-btn {
-    background-image: url("https://www.shutterstock.com/image-vector/delete-icongarbage-trash-can-rubbish-260nw-1211550652.jpg");
-}
-
-.delete-btn:hover,
-.upvote-btn:hover,
-.report-btn:hover,
-.downvote-btn:hover {
-    transform: scale(1.3);
-}
-
+/* Sidebar */
 .sidebar {
-    width: 220px;
-    padding: 20px;
-    background: linear-gradient(to right, #ee5a6f, #f29263);
-    color: #333;
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    position: fixed;
-    top: 115px;
-    left: 20px;
-    height: calc(100vh - 120px);
-    overflow-y: auto;
-    transition: all 0.3s ease;
+    @apply bg-white rounded-lg shadow p-4 mb-6;
 }
 
 .sidebar h4 {
-    font-size: 22px;
-    margin-bottom: 15px;
-    color: #f7fafc;
-    font-family: "Montserrat", sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-bottom: 2px solid #ffffff50;
-    padding-bottom: 10px;
-    animation: slideInLeft 1s ease;
+    @apply text-lg font-semibold mb-3 text-gray-800;
 }
 
 .sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    @apply list-none pl-0;
 }
 
-.sidebar ul li {
-    margin-bottom: 15px;
-    animation: fadeInUp 0.5s ease forwards;
+.sidebar li {
+    @apply mb-2;
 }
 
-.sidebar ul li a {
-    color: #f7fafc;
-    text-decoration: none;
-    font-family: "Poppins", sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 10px 15px;
-    display: block;
-    border-radius: 8px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+.sidebar a {
+    @apply text-orange-600 hover:text-orange-800 transition duration-200;
 }
 
-.sidebar ul li a:hover {
-    background-color: #1b61e337;
-    transform: translateX(5px);
+/* Question Box */
+.question-box {
+    @apply bg-white rounded-lg shadow mb-6 overflow-hidden;
 }
 
-.sidebar ul li a::before {
-    content: "› ";
-    font-size: 18px;
-    margin-right: 5px;
+.question-header {
+    @apply bg-gray-50 px-6 py-4 border-b border-gray-200;
 }
 
-.sidebar ul li a:active {
-    transform: translateX(0);
-    background: linear-gradient(to right, #ee5a6f, #f29263);
+.question-title {
+    @apply text-2xl font-bold text-gray-800;
 }
 
-.container {
-    margin-left: calc(220px + 20px);
-    padding: 30px;
-    max-width: calc(100% - (220px + 40px));
-    background-color: #ffffff;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-    border: 1px solid #e2e8f0;
-    position: relative;
-    border-radius: 15px;
-    top: 10px;
-    overflow-y: auto;
-    height: calc(100vh - 120px);
-    box-sizing: border-box;
-    word-wrap: break-word; /* Ensure wrapping for all text content */
-    overflow-wrap: break-word; /* Break long words if needed */
+.question-meta {
+    @apply flex flex-wrap items-center text-sm text-gray-600 mt-2;
 }
 
-.container::-webkit-scrollbar {
-    display: none;
+.question-meta span {
+    @apply mr-4;
 }
 
+.question-meta a {
+    @apply text-blue-600 hover:text-blue-800 font-medium;
+}
+
+.question-content {
+    @apply px-6 py-4;
+}
+
+.question-content pre {
+    @apply whitespace-pre-wrap bg-gray-100 p-4 rounded border border-gray-300 overflow-x-auto text-sm;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.question-tags {
+    @apply mt-4;
+}
+
+.question-tags span {
+    @apply inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded mr-2 mb-2;
+}
+
+/* Button Styles */
+.button-container {
+    @apply flex flex-wrap items-center mt-4 space-x-2;
+}
+
+.btn {
+    @apply w-8 h-8 bg-gray-200 border-0 rounded flex items-center justify-center cursor-pointer transition duration-200;
+}
+
+.btn:hover {
+    @apply bg-gray-300;
+}
+
+/* Specific Button Icons (using Bootstrap Icons classes which are included) */
+.upvote-btn::before {
+    content: "\f278"; /* bi-hand-thumbs-up */
+    font-family: 'bootstrap-icons';
+    font-size: 1rem;
+    color: #333;
+}
+
+.upvote-btn:hover::before {
+    color: #10b981; /* green-500 */
+}
+
+.downvote-btn::before {
+    content: "\f275"; /* bi-hand-thumbs-down */
+    font-family: 'bootstrap-icons';
+    font-size: 1rem;
+    color: #333;
+}
+
+.downvote-btn:hover::before {
+    color: #ef4444; /* red-500 */
+}
+
+.report-btn::before {
+    content: "\f32d"; /* bi-flag */
+    font-family: 'bootstrap-icons';
+    font-size: 1rem;
+    color: #333;
+}
+
+.report-btn:hover::before {
+    color: #f59e0b; /* amber-500 */
+}
+
+.delete-btn::before {
+    content: "\f2a7"; /* bi-trash */
+    font-family: 'bootstrap-icons';
+    font-size: 1rem;
+    color: #333;
+}
+
+.delete-btn:hover::before {
+    color: #ef4444; /* red-500 */
+}
+
+/* Replies Section */
+.replies-section {
+    @apply mt-8;
+}
+
+.replies-section h3 {
+    @apply text-xl font-semibold mb-4 text-gray-800;
+}
+
+.reply-box {
+    @apply border-t border-gray-200 pt-4 mt-4 first:border-t-0 first:pt-0 first:mt-0;
+}
+
+.reply-meta {
+    @apply flex flex-wrap items-center text-sm text-gray-600 mb-2;
+}
+
+.reply-meta span {
+    @apply mr-4;
+}
+
+.reply-meta a {
+    @apply text-orange-600 hover:text-orange-800 font-medium;
+}
+
+.reply-content pre {
+    @apply whitespace-pre-wrap bg-gray-100 p-4 rounded border border-gray-300 overflow-x-auto text-sm mt-2;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Reply Form */
 .reply-form-box {
-    margin-top: 30px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    @apply bg-white rounded-lg shadow p-6 mt-6;
 }
 
-.reply-form {
-    margin-top: 20px;
+.reply-form-box h4 {
+    @apply text-lg font-semibold mb-4 text-gray-800;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.form-group {
+    @apply mb-4;
 }
 
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.form-group label {
+    @apply block text-gray-700 text-sm font-bold mb-2;
 }
 
-@keyframes slideInLeft {
-    from {
-        transform: translateX(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+.input-text {
+    @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
 }
 
-@media (max-width: 768px) {
-    .question-content pre,
-    .replies-content pre {
-        white-space: pre-wrap; /* Ensure wrapping for preformatted text */
-        word-wrap: break-word; /* Break long words */
-        overflow-wrap: break-word;
-    }
+.submit-btn {
+    @apply button-primary;
+}
 
-    .container,
-    .question-box,
-    .replies-box,
-    .reply-form-box {
-        padding: 10px;
-        width: 100%;
-        word-wrap: break-word; /* Prevent overflow */
-        overflow-wrap: break-word;
-    }
+/* No Replies Message */
+.no-replies {
+    @apply text-gray-500 italic;
+}
 
-    .sidebar {
-        display: none; /* Hide sidebar on small screens */
-    }
+/* Status Messages (Success/Error) */
+.status-message {
+    @apply p-4 rounded mb-4 text-center;
+}
 
-    .container {
-        margin-left: 0;
-        max-width: 100%;
-    }
+.status-success {
+    @apply bg-green-100 text-green-800;
+}
+
+.status-error {
+    @apply bg-red-100 text-red-800;
 }
