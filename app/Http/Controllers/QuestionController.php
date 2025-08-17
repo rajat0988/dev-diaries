@@ -60,7 +60,7 @@ class QuestionController extends Controller
             ->countBy()
             ->sortDesc();
 
-        $mostUsedTags = $tagCounts->keys()->take(10);
+        $mostUsedTags = $tagCounts->keys()->take(5);
 
         $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
 

@@ -4,92 +4,109 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Importing fonts used across the site */
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Spartan:wght@600&display=swap');
-
 /* Base Styles */
 body {
-    font-family: 'Quicksand', sans-serif;
-    background-color: #f9fafb;
+    background-color: #f6f5f7;
     color: #333;
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
-/* Primary button color from index page */
-.button-primary {
-    background-color: #e62143;
-    border-radius: 10px;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    color: white;
-    font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
-    border: none;
-    cursor: pointer;
-}
-
-.button-primary:hover {
-    background-color: #d11a39;
+.dark body {
+    background-color: #1a202c;
+    color: #e2e8f0;
 }
 
 /* Main Container */
 .question-container {
-    @apply max-w-6xl mx-auto px-4 py-8;
+    @apply max-w-7xl mx-auto px-4 py-8;
+}
+
+/* Card Styles */
+.card {
+    @apply bg-white rounded-lg shadow-lg overflow-hidden;
+}
+
+.dark .card {
+    @apply bg-gray-800 shadow-gray-800;
 }
 
 /* Sidebar */
 .sidebar {
-    @apply bg-white rounded-lg shadow p-4 mb-6;
+    @apply card;
 }
 
 .sidebar h4 {
-    @apply text-lg font-semibold mb-3 text-gray-800;
+    @apply text-lg font-semibold mb-3 text-gray-800 px-6 py-4 border-b border-gray-200;
+    background: linear-gradient(to right, #FF4B2B, #FF416C);
+    color: white;
+}
+
+.dark .sidebar h4 {
+    @apply text-gray-100 border-gray-700;
 }
 
 .sidebar ul {
-    @apply list-none pl-0;
+    @apply list-none pl-0 py-4;
 }
 
 .sidebar li {
-    @apply mb-2;
+    @apply mb-2 px-6;
 }
 
 .sidebar a {
-    @apply text-orange-600 hover:text-orange-800 transition duration-200;
+    @apply text-orange-600 hover:text-orange-800 transition duration-200 block py-2 px-4 rounded hover:bg-gray-50;
+}
+
+.dark .sidebar a {
+    @apply text-orange-400 hover:text-orange-300 hover:bg-gray-700;
 }
 
 /* Question Box */
 .question-box {
-    @apply bg-white rounded-lg shadow mb-6 overflow-hidden;
+    @apply card mb-6;
 }
 
 .question-header {
-    @apply bg-gray-50 px-6 py-4 border-b border-gray-200;
+    @apply bg-gray-100 px-6 py-4 border-b border-gray-200;
+}
+
+.dark .question-header {
+    @apply bg-gray-700 border-gray-600;
 }
 
 .question-title {
-    @apply text-2xl font-bold text-gray-800;
+    @apply text-3xl font-bold text-gray-800 mb-2;
+}
+
+.dark .question-title {
+    @apply text-gray-100;
 }
 
 .question-meta {
-    @apply flex flex-wrap items-center text-sm text-gray-600 mt-2;
+    @apply flex flex-wrap items-center text-sm text-gray-600 mt-2 mb-4;
+}
+
+.dark .question-meta {
+    @apply text-gray-400;
 }
 
 .question-meta span {
-    @apply mr-4;
-}
-
-.question-meta a {
-    @apply text-blue-600 hover:text-blue-800 font-medium;
+    @apply mr-6;
 }
 
 .question-content {
-    @apply px-6 py-4;
+    @apply px-6 py-4 text-base leading-relaxed;
 }
 
 .question-content pre {
-    @apply whitespace-pre-wrap bg-gray-100 p-4 rounded border border-gray-300 overflow-x-auto text-sm;
+    @apply whitespace-pre-wrap bg-gray-100 p-4 rounded border border-gray-300 overflow-x-auto text-base;
     font-family: 'Courier New', Courier, monospace;
+}
+
+.dark .question-content pre {
+    @apply bg-gray-700 border-gray-600 text-gray-100;
 }
 
 .question-tags {
@@ -97,7 +114,11 @@ body {
 }
 
 .question-tags span {
-    @apply inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded mr-2 mb-2;
+    @apply inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-2 mb-2;
+}
+
+.dark .question-tags span {
+    @apply bg-blue-900 text-blue-200;
 }
 
 /* Button Styles */
@@ -106,95 +127,103 @@ body {
 }
 
 .btn {
-    @apply w-8 h-8 bg-gray-200 border-0 rounded flex items-center justify-center cursor-pointer transition duration-200;
+    @apply w-8 h-8 border-0 rounded flex items-center justify-center cursor-pointer transition duration-200;
+    background-color: #f0f0f0;
+}
+
+.dark .btn {
+    background-color: #4a5568;
 }
 
 .btn:hover {
-    @apply bg-gray-300;
+    background-color: #e0e0e0;
 }
 
-/* Specific Button Icons (using Bootstrap Icons classes which are included) */
-.upvote-btn::before {
-    content: "\f278"; /* bi-hand-thumbs-up */
-    font-family: 'bootstrap-icons';
-    font-size: 1rem;
-    color: #333;
+.dark .btn:hover {
+    background-color: #2d3748;
 }
 
-.upvote-btn:hover::before {
-    color: #10b981; /* green-500 */
+.btn svg {
+    width: 16px;
+    height: 16px;
 }
 
-.downvote-btn::before {
-    content: "\f275"; /* bi-hand-thumbs-down */
-    font-family: 'bootstrap-icons';
-    font-size: 1rem;
-    color: #333;
+/* Primary Button (Submit) */
+.submit-btn {
+    border-radius: 20px;
+    border: 1px solid #FF4B2B;
+    background-color: #FF4B2B;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    cursor: pointer;
 }
 
-.downvote-btn:hover::before {
-    color: #ef4444; /* red-500 */
-}
-
-.report-btn::before {
-    content: "\f32d"; /* bi-flag */
-    font-family: 'bootstrap-icons';
-    font-size: 1rem;
-    color: #333;
-}
-
-.report-btn:hover::before {
-    color: #f59e0b; /* amber-500 */
-}
-
-.delete-btn::before {
-    content: "\f2a7"; /* bi-trash */
-    font-family: 'bootstrap-icons';
-    font-size: 1rem;
-    color: #333;
-}
-
-.delete-btn:hover::before {
-    color: #ef4444; /* red-500 */
+.submit-btn:hover {
+    background-color: #e62143;
 }
 
 /* Replies Section */
 .replies-section {
-    @apply mt-8;
+    @apply card mt-6;
 }
 
-.replies-section h3 {
-    @apply text-xl font-semibold mb-4 text-gray-800;
+.replies-section > h3 {
+    @apply text-xl font-semibold mb-4 text-gray-800 px-6 py-4 border-b border-gray-200;
+}
+
+.dark .replies-section > h3 {
+    @apply text-gray-100 border-gray-600;
 }
 
 .reply-box {
-    @apply border-t border-gray-200 pt-4 mt-4 first:border-t-0 first:pt-0 first:mt-0;
+    @apply border-t border-gray-200 pt-4 mt-4 first:border-t-0 first:pt-0 first:mt-0 px-6 pb-4;
+}
+
+.dark .reply-box {
+    @apply border-gray-700;
 }
 
 .reply-meta {
     @apply flex flex-wrap items-center text-sm text-gray-600 mb-2;
 }
 
-.reply-meta span {
-    @apply mr-4;
+.dark .reply-meta {
+    @apply text-gray-400;
 }
 
-.reply-meta a {
-    @apply text-orange-600 hover:text-orange-800 font-medium;
+.reply-meta span {
+    @apply mr-6;
 }
 
 .reply-content pre {
-    @apply whitespace-pre-wrap bg-gray-100 p-4 rounded border border-gray-300 overflow-x-auto text-sm mt-2;
+    @apply whitespace-pre-wrap bg-gray-100 p-4 rounded border border-gray-300 overflow-x-auto text-base;
     font-family: 'Courier New', Courier, monospace;
+}
+
+.dark .reply-content pre {
+    @apply bg-gray-700 border-gray-600 text-gray-100;
 }
 
 /* Reply Form */
 .reply-form-box {
-    @apply bg-white rounded-lg shadow p-6 mt-6;
+    @apply card mt-6;
 }
 
 .reply-form-box h4 {
-    @apply text-lg font-semibold mb-4 text-gray-800;
+    @apply text-lg font-semibold mb-4 text-gray-800 px-6 py-4 border-b border-gray-200;
+}
+
+.dark .reply-form-box h4 {
+    @apply text-gray-100 border-gray-600;
+}
+
+.reply-form-box form {
+    @apply px-6 py-4;
 }
 
 .form-group {
@@ -202,20 +231,28 @@ body {
 }
 
 .form-group label {
-    @apply block text-gray-700 text-sm font-bold mb-2;
+    @apply block text-gray-700 text-base font-medium mb-2;
+}
+
+.dark .form-group label {
+    @apply text-gray-300;
 }
 
 .input-text {
-    @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+    @apply shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 text-base;
 }
 
-.submit-btn {
-    @apply button-primary;
+.dark .input-text {
+    @apply bg-gray-700 border-gray-600 text-gray-100;
 }
 
 /* No Replies Message */
 .no-replies {
-    @apply text-gray-500 italic;
+    @apply text-gray-500 italic px-6 py-4;
+}
+
+.dark .no-replies {
+    @apply text-gray-400;
 }
 
 /* Status Messages (Success/Error) */
@@ -227,6 +264,14 @@ body {
     @apply bg-green-100 text-green-800;
 }
 
+.dark .status-success {
+    @apply bg-green-900 text-green-200;
+}
+
 .status-error {
     @apply bg-red-100 text-red-800;
+}
+
+.dark .status-error {
+    @apply bg-red-900 text-red-200;
 }
