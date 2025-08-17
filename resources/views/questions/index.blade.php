@@ -4,9 +4,6 @@
 @vite('resources/css/index.css')
 
 <div class="max-w-7xl mx-auto px-4 py-8">
-    <!-- Page Title -->
-    <h1 class="heading text-3xl font-bold text-center mb-8">Dev Diaries</h1>
-
     <!-- Main Content Layout -->
     <div class="flex flex-col lg:flex-row gap-6">
         <!-- Sidebar - Filters -->
