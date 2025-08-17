@@ -214,22 +214,7 @@ body {
     @apply bg-red-900 text-red-200;
 }
 
-/* Scrollbar */
-.scrollbar {
-    @apply fixed h-screen w-1 top-0 left-0 bg-gray-300;
-}
 
-.dark .scrollbar {
-    @apply bg-gray-600;
-}
-
-.scrollbar-fill {
-    @apply h-full bg-green-400;
-}
-
-.dark .scrollbar-fill {
-    @apply bg-green-600;
-}
 
 /* Vote Buttons */
 .upvote-btn,

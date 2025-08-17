@@ -40,6 +40,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
     Route::get('/user/{id}', [ProfileController::class, 'show'])->name('profile.show');
+    
+    // Toast test page
+    Route::get('/toast-test', function () {
+        return view('toast-test');
+    })->name('toast.test');
 
     // Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 

@@ -51,6 +51,10 @@
                 <a href="{{ route('questions.create') }}" class="button-primary">
                     Ask a Question
                 </a>
+                <!-- Test Toast Button -->
+                <button id="test-toast" class="button-primary ml-2">
+                    Test Toast
+                </button>
             </div>
 
             <!-- Admin View: Reported Questions -->
@@ -98,34 +102,25 @@
     </div>
 </div>
 
-<!-- Progress Scrollbar -->
-<div x-data="scrollHandler(document.getElementById('the-article'))" x-cloak aria-hidden="true" 
-    @scroll.window="calculateHeight(window.scrollY)"
-    class="fixed h-screen w-1 top-0 left-0 bg-gray-300 dark:bg-gray-600">
-    <div :style="`max-height:${height}%`" class="h-full bg-green-400 dark:bg-green-600"></div>
-</div>
-
-<!-- Alpine.js Scroll Handler -->
-<script>
-    function scrollHandler(element = null) {
-        return {
-            height: 0,
-            element: element,
-            calculateHeight(position) {
-                const distanceFromTop = this.element.offsetTop;
-                const contentHeight = this.element.clientHeight;
-                const visibleContent = contentHeight - window.innerHeight;
-                const start = Math.max(0, position - distanceFromTop);
-                const percent = (start / visibleContent) * 100;
-                requestAnimationFrame(() => {
-                    this.height = percent;
-                });
-            },
-            init() {
-                this.element = this.element || document.body;
-                this.calculateHeight(window.scrollY);
-            }
-        };
-    }
-</script>
 @endsection
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const testToastBtn = document.getElementById('test-toast');
+    if (testToastBtn) {
+        testToastBtn.addEventListener('click', function() {
+            if (typeof window.showToast !== 'undefined') {
+                window.showToast('This is a test success message!', 'success');
+                setTimeout(() => {
+                    window.showToast('This is a test error message!', 'error');
+                }, 1500);
+            } else {
+                console.log('Toast system not available');
+            }
+        });
+    }
+    
+    // Check if toast system is available
+    console.log('Toast system check - available:', typeof window.showToast !== 'undefined');
+});
+</script>

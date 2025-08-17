@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/profile.css',
                 'resources/css/showQuestions.css',
                 'resources/css/index.css',
+                'resources/css/toast.css',
                 'resources/js/app.js',
             ],
             refresh: true,

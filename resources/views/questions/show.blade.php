@@ -45,9 +45,6 @@
                 <div class="question-content">
                     <pre>{{ $question->Content }}</pre>
                     <div class="button-container">
-                        <!-- Vote message container -->
-                        <div id="question-vote-message" class="status-message hidden"></div>
-                        
                         <button id="question-upvote-btn" data-question-id="{{ $question->id }}" class="btn" title="{{ isset($userVote) && $userVote && $userVote->vote_type == 1 ? 'Remove Upvote' : 'Upvote' }}">
                             @if(isset($userVote) && $userVote && $userVote->vote_type == 1)
                                 <x-lucide-thumbs-up class="h-5 w-5 fill-current text-green-500" />
@@ -97,9 +94,6 @@
                     <div class="reply-content">
                         <pre>{{ $reply->Content }}</pre>
                         <div class="button-container">
-                            <!-- Vote message container for each reply -->
-                            <div id="reply-vote-message-{{ $reply->id }}" class="status-message hidden"></div>
-                            
                             <button id="reply-upvote-btn-{{ $reply->id }}" data-reply-id="{{ $reply->id }}" class="btn" title="{{ isset($replyVotes[$reply->id]) && $replyVotes[$reply->id] == 1 ? 'Remove Upvote' : 'Upvote' }}">
                                 @if(isset($replyVotes[$reply->id]) && $replyVotes[$reply->id] == 1)
                                     <x-lucide-thumbs-up class="h-5 w-5 fill-current text-green-500" />
@@ -195,26 +189,44 @@
                 console.log('Success response:', response);
                 // Update the UI with the response
                 if (response.success) {
-                    $('#question-vote-message').removeClass('status-error').addClass('status-success').text(response.success).show();
+                    // Show success toast
+                    if (typeof window.showToast !== 'undefined') {
+                        window.showToast(response.success, 'success');
+                    } else {
+                        $('#question-vote-message').removeClass('status-error').addClass('status-success').text(response.success).show();
+                        // Hide message after 3 seconds
+                        setTimeout(function() {
+                            $('#question-vote-message').hide();
+                        }, 3000);
+                    }
                     // Update vote count
                     $('#question-upvotes').text(response.upvotes);
                     // Update button states
                     updateQuestionVoteButtons(response.userVote, questionId);
                 } else if (response.error) {
-                    $('#question-vote-message').removeClass('status-success').addClass('status-error').text(response.error).show();
+                    // Show error toast
+                    if (typeof window.showToast !== 'undefined') {
+                        window.showToast(response.error, 'error');
+                    } else {
+                        $('#question-vote-message').removeClass('status-success').addClass('status-error').text(response.error).show();
+                        setTimeout(function() {
+                            $('#question-vote-message').hide();
+                        }, 3000);
+                    }
                 }
-                // Hide message after 3 seconds
-                setTimeout(function() {
-                    $('#question-vote-message').hide();
-                }, 3000);
             },
             error: function(xhr, status, error) {
                 console.log('AJAX Error:', xhr, status, error);
                 console.log('Response text:', xhr.responseText);
-                $('#question-vote-message').removeClass('status-success').addClass('status-error').text('An error occurred. Please try again.').show();
-                setTimeout(function() {
-                    $('#question-vote-message').hide();
-                }, 3000);
+                // Show error toast
+                if (typeof window.showToast !== 'undefined') {
+                    window.showToast('An error occurred. Please try again.', 'error');
+                } else {
+                    $('#question-vote-message').removeClass('status-success').addClass('status-error').text('An error occurred. Please try again.').show();
+                    setTimeout(function() {
+                        $('#question-vote-message').hide();
+                    }, 3000);
+                }
             }
         });
     }
@@ -248,26 +260,44 @@
                 console.log('Success response:', response);
                 // Update the UI with the response
                 if (response.success) {
-                    $('#reply-vote-message-' + replyId).removeClass('status-error').addClass('status-success').text(response.success).show();
+                    // Show success toast
+                    if (typeof window.showToast !== 'undefined') {
+                        window.showToast(response.success, 'success');
+                    } else {
+                        $('#reply-vote-message-' + replyId).removeClass('status-error').addClass('status-success').text(response.success).show();
+                        // Hide message after 3 seconds
+                        setTimeout(function() {
+                            $('#reply-vote-message-' + replyId).hide();
+                        }, 3000);
+                    }
                     // Update vote count
                     $('#reply-upvotes-' + replyId).text(response.upvotes);
                     // Update button states
                     updateReplyVoteButtons(response.userVote, replyId);
                 } else if (response.error) {
-                    $('#reply-vote-message-' + replyId).removeClass('status-success').addClass('status-error').text(response.error).show();
+                    // Show error toast
+                    if (typeof window.showToast !== 'undefined') {
+                        window.showToast(response.error, 'error');
+                    } else {
+                        $('#reply-vote-message-' + replyId).removeClass('status-success').addClass('status-error').text(response.error).show();
+                        setTimeout(function() {
+                            $('#reply-vote-message-' + replyId).hide();
+                        }, 3000);
+                    }
                 }
-                // Hide message after 3 seconds
-                setTimeout(function() {
-                    $('#reply-vote-message-' + replyId).hide();
-                }, 3000);
             },
             error: function(xhr, status, error) {
                 console.log('AJAX Error:', xhr, status, error);
                 console.log('Response text:', xhr.responseText);
-                $('#reply-vote-message-' + replyId).removeClass('status-success').addClass('status-error').text('An error occurred. Please try again.').show();
-                setTimeout(function() {
-                    $('#reply-vote-message-' + replyId).hide();
-                }, 3000);
+                // Show error toast
+                if (typeof window.showToast !== 'undefined') {
+                    window.showToast('An error occurred. Please try again.', 'error');
+                } else {
+                    $('#reply-vote-message-' + replyId).removeClass('status-success').addClass('status-error').text('An error occurred. Please try again.').show();
+                    setTimeout(function() {
+                        $('#reply-vote-message-' + replyId).hide();
+                    }, 3000);
+                }
             }
         });
     }
@@ -327,6 +357,21 @@
             console.log('Reply ID:', replyId);
             voteReply(replyId, 'down');
         });
+    });
+</script>
+<script>
+    // Test function to verify toast system is working
+    function testToast() {
+        if (typeof window.showToast !== 'undefined') {
+            window.showToast('Toast system is working!', 'success');
+        } else {
+            console.log('Toast system not available');
+        }
+    }
+    
+    // Run test when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Toast system check - available:', typeof window.showToast !== 'undefined');
     });
 </script>
 @endsection
