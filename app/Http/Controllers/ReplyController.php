@@ -45,10 +45,17 @@ class ReplyController extends Controller
     
         if ($existingVote) {
             if ($existingVote->vote_type == 1) {
-                return redirect()->back()->with('error', 'You have already upvoted this reply.');
+                // User has already upvoted, so remove the vote
+                $existingVote->delete();
+                $reply->decrement('Upvotes'); // Decrement by 1
+                $message = 'Upvote removed successfully!';
+                $userVote = null;
             } else {
+                // User has downvoted, switch to upvote
                 $existingVote->update(['vote_type' => 1]);
                 $reply->increment('Upvotes', 2);
+                $message = 'Reply upvoted successfully!';
+                $userVote = 1;
             }
         } else {
             $reply->votes()->create([
@@ -56,9 +63,23 @@ class ReplyController extends Controller
                 'vote_type' => 1
             ]);
             $reply->upvote();
+            $message = 'Reply upvoted successfully!';
+            $userVote = 1;
         }
     
-        return redirect()->back()->with('success', 'Reply upvoted successfully!');
+        // Refresh the reply to get updated upvotes count
+        $reply->refresh();
+    
+        // Check if it's an AJAX request
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => $message,
+                'upvotes' => $reply->Upvotes,
+                'userVote' => $userVote
+            ]);
+        }
+    
+        return redirect()->back()->with('success', $message);
     }
     
     public function downvote($id)
@@ -70,10 +91,17 @@ class ReplyController extends Controller
     
         if ($existingVote) {
             if ($existingVote->vote_type == 0) {
-                return redirect()->back()->with('error', 'You have already downvoted this reply.');
+                // User has already downvoted, so remove the vote
+                $existingVote->delete();
+                $reply->increment('Upvotes'); // Increment by 1 (removing downvote)
+                $message = 'Downvote removed successfully!';
+                $userVote = null;
             } else {
+                // User has upvoted, switch to downvote
                 $existingVote->update(['vote_type' => 0]);
                 $reply->decrement('Upvotes', 2);
+                $message = 'Reply downvoted successfully!';
+                $userVote = 0;
             }
         } else {
             $reply->votes()->create([
@@ -81,9 +109,23 @@ class ReplyController extends Controller
                 'vote_type' => 0
             ]);
             $reply->downvote();
+            $message = 'Reply downvoted successfully!';
+            $userVote = 0;
         }
     
-        return redirect()->back()->with('success', 'Reply downvoted successfully!');
+        // Refresh the reply to get updated upvotes count
+        $reply->refresh();
+    
+        // Check if it's an AJAX request
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => $message,
+                'upvotes' => $reply->Upvotes,
+                'userVote' => $userVote
+            ]);
+        }
+    
+        return redirect()->back()->with('success', $message);
     }
 
     public function destroy($id)

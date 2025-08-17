@@ -12,7 +12,7 @@
                         &copy; {{ date('Y') }} Dev Diaries. All rights reserved.
                     </div>
                 </div>
-                
+
                 <div class="flex flex-col items-center md:items-end">
                     <!-- Made by text -->
                     <div class="text-base text-gray-400 mb-4">
@@ -20,12 +20,12 @@
                     </div>
                     <!-- Names -->
                     <div class="flex flex-wrap justify-center gap-4">
-                        <span class="text-base font-medium text-blue-300">Alex Johnson,</span>
-                        <span class="text-base font-medium text-blue-300">Taylor Smith,</span>
-                        <span class="text-base font-medium text-blue-300">Jordan Williams,</span>
-                        <span class="text-base font-medium text-blue-300">Morgan Brown,</span>
-                        <span class="text-base font-medium text-blue-300">Casey Davis,</span>
-                        <span class="text-base font-medium text-blue-300">Riley Miller</span>
+                        <span class="text-base font-medium text-blue-300">Aditi Singh,</span>
+                        <span class="text-base font-medium text-blue-300">Rachit Pal,</span>
+                        <span class="text-base font-medium text-blue-300">Aaruniy Akhil,</span>
+                        <span class="text-base font-medium text-blue-300">Praduman Rawat,</span>
+                        <span class="text-base font-medium text-blue-300">Rishav Rathore,</span>
+                        <span class="text-base font-medium text-blue-300">Rajat Malhotra</span>
                     </div>
                 </div>
             </div>
