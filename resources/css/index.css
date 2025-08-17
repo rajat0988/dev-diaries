@@ -1,0 +1,248 @@
+/* resources/css/index.css */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Base Styles */
+body {
+    background-color: #f6f5f7;
+    color: #333;
+    min-height: 100vh;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.dark body {
+    background-color: #1a202c;
+    color: #e2e8f0;
+}
+
+/* Page Title */
+.heading {
+    @apply text-3xl font-bold text-center mb-8 text-gray-800;
+}
+
+.dark .heading {
+    @apply text-gray-100;
+}
+
+/* Card Styles */
+.card {
+    @apply bg-white rounded-lg shadow-lg overflow-hidden;
+}
+
+.dark .card {
+    @apply bg-gray-800 shadow-gray-800;
+}
+
+.card-header {
+    @apply bg-gray-100 px-6 py-4 border-b border-gray-200;
+}
+
+.dark .card-header {
+    @apply bg-gray-700 border-gray-600;
+}
+
+.card-title {
+    @apply text-xl font-bold text-gray-800;
+}
+
+.dark .card-title {
+    @apply text-gray-100;
+}
+
+.card-content {
+    @apply px-6 py-4;
+}
+
+/* Primary Button */
+.button-primary {
+    border-radius: 20px;
+    border: 1px solid #FF4B2B;
+    background-color: #FF4B2B;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 12px 24px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.button-primary:hover {
+    background-color: #e62143;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark .button-primary:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.button-primary:active {
+    transform: translateY(0);
+}
+
+/* Filters Section */
+.filters {
+    @apply card;
+}
+
+.filters-header {
+    @apply card-header;
+}
+
+.filters-content {
+    @apply card-content;
+}
+
+.filters-title {
+    @apply text-lg font-semibold text-gray-800;
+}
+
+.dark .filters-title {
+    @apply text-gray-100;
+}
+
+.filters-subtitle {
+    @apply text-base font-semibold mb-2 text-gray-700;
+}
+
+.dark .filters-subtitle {
+    @apply text-gray-300;
+}
+
+/* Question List */
+.question-list {
+    @apply card;
+}
+
+.question-list-header {
+    @apply card-header;
+}
+
+.question-item {
+    @apply border-t border-gray-200 pt-4 mt-4 first:border-t-0 first:pt-0 first:mt-0 px-6 pb-4;
+}
+
+.dark .question-item {
+    @apply border-gray-700;
+}
+
+.question-item a {
+    @apply text-blue-600 hover:text-blue-800 font-semibold text-lg;
+}
+
+.dark .question-item a {
+    @apply text-blue-400 hover:text-blue-300;
+}
+
+.question-meta {
+    @apply flex flex-wrap items-center text-sm text-gray-600 mt-2;
+}
+
+.dark .question-meta {
+    @apply text-gray-400;
+}
+
+.question-meta span {
+    @apply mr-6;
+}
+
+/* Question Cards - Updated spacing and height */
+.question-card {
+    @apply card mb-4 p-4;
+}
+
+.question-card:hover {
+    @apply shadow-xl transition-shadow duration-300;
+}
+
+.dark .question-card:hover {
+    @apply shadow-gray-800;
+}
+
+.question-card-title {
+    @apply font-semibold text-lg mb-2;
+}
+
+.question-card-meta {
+    @apply flex justify-between items-center text-sm;
+}
+
+.question-card-votes {
+    @apply text-gray-500;
+}
+
+.question-card-answered {
+    @apply text-gray-600;
+}
+
+.dark .question-card-votes,
+.dark .question-card-answered {
+    @apply text-gray-400;
+}
+
+/* Pagination */
+.pagination {
+    @apply mt-6;
+}
+
+/* Status Messages */
+.status-message {
+    @apply p-4 rounded mb-4 text-center;
+}
+
+.status-success {
+    @apply bg-green-100 text-green-800;
+}
+
+.dark .status-success {
+    @apply bg-green-900 text-green-200;
+}
+
+.status-error {
+    @apply bg-red-100 text-red-800;
+}
+
+.dark .status-error {
+    @apply bg-red-900 text-red-200;
+}
+
+/* Scrollbar */
+.scrollbar {
+    @apply fixed h-screen w-1 top-0 left-0 bg-gray-300;
+}
+
+.dark .scrollbar {
+    @apply bg-gray-600;
+}
+
+.scrollbar-fill {
+    @apply h-full bg-green-400;
+}
+
+.dark .scrollbar-fill {
+    @apply bg-green-600;
+}
+
+/* Vote Buttons */
+.upvote-btn,
+.downvote-btn {
+    @apply text-gray-500 hover:text-blue-500 transition-colors;
+}
+
+.dark .upvote-btn,
+.dark .downvote-btn {
+    @apply text-gray-400 hover:text-blue-400;
+}
+
+/* Filled vote icons */
+.fill-current {
+    fill: currentColor;
+}

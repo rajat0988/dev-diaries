@@ -60,7 +60,7 @@ class QuestionController extends Controller
             ->countBy()
             ->sortDesc();
 
-        $mostUsedTags = $tagCounts->keys()->take(10);
+        $mostUsedTags = $tagCounts->keys()->take(5);
 
         $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
 
@@ -71,24 +71,47 @@ class QuestionController extends Controller
     {
         $question = Question::with('replies')->findOrFail($id);
         $recent_questions = Question::orderBy('created_at', 'desc')->paginate(4);
-        return view('questions.show', compact('question','recent_questions'));
+        
+        // Get user's vote status for the question
+        $userVote = null;
+        if (Auth::check()) {
+            $userVote = $question->votes()->where('user_id', Auth::id())->first();
+        }
+        
+        // Get user's vote status for each reply
+        $replyVotes = [];
+        if (Auth::check()) {
+            foreach ($question->replies as $reply) {
+                $vote = $reply->votes()->where('user_id', Auth::id())->first();
+                if ($vote) {
+                    $replyVotes[$reply->id] = $vote->vote_type;
+                }
+            }
+        }
+        
+        return view('questions.show', compact('question', 'recent_questions', 'userVote', 'replyVotes'));
     }
 
     public function upvote($id)
     {
         $question = Question::findOrFail($id);
         $user = Auth::user();
-    
+
         $existingVote = $question->votes()->where('user_id', $user->id)->first();
-    
+
         if ($existingVote) {
             if ($existingVote->vote_type == 1) {
-                // User has already upvoted, so do nothing or optionally, remove the vote.
-                return redirect()->back()->with('error', 'You have already upvoted this question.');
+                // User has already upvoted, so remove the vote
+                $existingVote->delete();
+                $question->decrement('Upvotes'); // Decrement by 1
+                $message = 'Upvote removed successfully!';
+                $userVote = null;
             } else {
                 // User has downvoted, switch to upvote
                 $existingVote->update(['vote_type' => 1]);
                 $question->increment('Upvotes', 2); // Adjust the count accordingly
+                $message = 'Question upvoted successfully!';
+                $userVote = 1;
             }
         } else {
             $question->votes()->create([
@@ -96,26 +119,45 @@ class QuestionController extends Controller
                 'vote_type' => 1
             ]);
             $question->upvote();
+            $message = 'Question upvoted successfully!';
+            $userVote = 1;
         }
-    
-        return redirect()->back()->with('success', 'Question upvoted successfully!');
+
+        // Refresh the question to get updated upvotes count
+        $question->refresh();
+
+        // Check if it's an AJAX request
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => $message,
+                'upvotes' => $question->Upvotes,
+                'userVote' => $userVote
+            ]);
+        }
+
+        return redirect()->back()->with('success', $message);
     }
-    
+
     public function downvote($id)
     {
         $question = Question::findOrFail($id);
         $user = Auth::user();
-    
+
         $existingVote = $question->votes()->where('user_id', $user->id)->first();
-    
+
         if ($existingVote) {
             if ($existingVote->vote_type == 0) {
-                // User has already downvoted, so do nothing or optionally, remove the vote.
-                return redirect()->back()->with('error', 'You have already downvoted this question.');
+                // User has already downvoted, so remove the vote
+                $existingVote->delete();
+                $question->increment('Upvotes'); // Increment by 1 (removing downvote)
+                $message = 'Downvote removed successfully!';
+                $userVote = null;
             } else {
                 // User has upvoted, switch to downvote
                 $existingVote->update(['vote_type' => 0]);
                 $question->decrement('Upvotes', 2); // Adjust the count accordingly
+                $message = 'Question downvoted successfully!';
+                $userVote = 0;
             }
         } else {
             $question->votes()->create([
@@ -123,10 +165,24 @@ class QuestionController extends Controller
                 'vote_type' => 0
             ]);
             $question->downvote();
+            $message = 'Question downvoted successfully!';
+            $userVote = 0;
         }
-    
-        return redirect()->back()->with('success', 'Question downvoted successfully!');
-    }    
+
+        // Refresh the question to get updated upvotes count
+        $question->refresh();
+
+        // Check if it's an AJAX request
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => $message,
+                'upvotes' => $question->Upvotes,
+                'userVote' => $userVote
+            ]);
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
 
     public function filterByTag(Request $request)
     {
