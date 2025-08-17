@@ -62,6 +62,9 @@
                 @yield('content')
             </main>
 
+            <!-- Toast Container -->
+            @include('components.toast-container')
+
             <!-- Footer -->
             @include('components.footer')
         </div>
