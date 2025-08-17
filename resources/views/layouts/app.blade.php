@@ -9,18 +9,48 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/css/showQuestions.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        
+        <script>
+            // Simple dark mode implementation without Alpine dependencies
+            function initDarkMode() {
+                // Check if dark mode preference is stored
+                const isDarkMode = localStorage.getItem('darkMode') === 'true';
+                
+                // Apply dark mode class to document
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                }
+            }
+            
+            // Toggle dark mode
+            function toggleDarkMode() {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                if (isDarkMode) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('darkMode', 'false');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('darkMode', 'true');
+                }
+            }
+            
+            // Initialize dark mode on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                initDarkMode();
+            });
+        </script>
     </head>
-    <body class="">
-        <div {{-- class="min-h-screen bg-gray-100" --}}>
+    <body class="font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <div class="min-h-screen flex flex-col">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @hasSection('header')
-                <header class="bg-white shadow">
+                <header class="bg-white dark:bg-gray-800 shadow dark:shadow-gray-700">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         @yield('header')
                     </div>
@@ -28,9 +58,12 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main class="flex-grow">
                 @yield('content')
             </main>
+
+            <!-- Footer -->
+            @include('components.footer')
         </div>
     </body>
 </html>
