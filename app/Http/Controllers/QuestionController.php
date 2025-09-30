@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Question;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Cloudinary\Cloudinary;
 
 class QuestionController extends Controller
 {
@@ -21,6 +22,7 @@ class QuestionController extends Controller
             'Content' => 'required|string',
             'Tags' => 'nullable|array',
             'custom_tags' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // Max 5MB
         ]);
 
         $user = Auth::user();
@@ -34,14 +36,41 @@ class QuestionController extends Controller
 
         $tags = array_unique($tags);
 
+        // Handle image upload to Cloudinary
+        $imageUrl = null;
+        if ($request->hasFile('image')) {
+            try {
+                $cloudinary = new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => config('cloudinary.cloud_name'),
+                        'api_key' => config('cloudinary.api_key'),
+                        'api_secret' => config('cloudinary.api_secret'),
+                    ]
+                ]);
+
+                $uploadedFileUrl = $cloudinary->uploadApi()->upload(
+                    $request->file('image')->getRealPath(),
+                    [
+                        'folder' => 'dev-diaries/questions',
+                        'resource_type' => 'image'
+                    ]
+                );
+
+                $imageUrl = $uploadedFileUrl['secure_url'];
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Image upload failed: ' . $e->getMessage())->withInput();
+            }
+        }
+
         $post = new Question;
         $post->UserName = $user->name;
         $post->user_id = Auth::id();
         $post->EmailId = $user->email;
         $post->Title = $request->input('Title');
         $post->Content = $request->input('Content');
+        $post->image_url = $imageUrl;
         $post->Upvotes = 0;
-        $post->Tags = json_encode($tags);
+        $post->Tags = $tags; // No need for json_encode - model auto-casts to JSON
         $post->Answered = false;
         $post->save();
 
@@ -50,45 +79,72 @@ class QuestionController extends Controller
 
     public function index()
     {
-        $tagCounts = DB::table('questions')
-            ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
-            ->pluck('tag')
-            ->flatten()
-            ->map(fn($tag) => json_decode($tag, true))
-            ->flatten()
-            ->filter()
-            ->countBy()
-            ->sortDesc();
+        // Cache tag counts for 10 minutes to reduce DB load
+        $tagCounts = cache()->remember('tag_counts', 600, function () {
+            return DB::table('questions')
+                ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
+                ->pluck('tag')
+                ->flatten()
+                ->map(fn($tag) => json_decode($tag, true))
+                ->flatten()
+                ->filter()
+                ->countBy()
+                ->sortDesc();
+        });
 
         $mostUsedTags = $tagCounts->keys()->take(5);
 
-        $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
+        // Optimize: Select only needed columns, eager load user for questions
+        $all_questions = Question::select('id', 'UserName', 'user_id', 'Title', 'Content', 'image_url', 'Upvotes', 'Tags', 'Answered', 'created_at', 'updated_at')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
 
         return view('questions.index', compact('all_questions', 'mostUsedTags'));
     }
 
     public function show($id)
     {
-        $question = Question::with('replies')->findOrFail($id);
-        $recent_questions = Question::orderBy('created_at', 'desc')->paginate(4);
-        
+        // Eager load replies with their votes, and question votes
+        $question = Question::with([
+            'replies' => function ($query) {
+                $query->select('id', 'question_id', 'UserName', 'user_id', 'EmailId', 'Content', 'Upvotes', 'created_at', 'updated_at')
+                    ->orderBy('created_at', 'asc');
+            },
+            'replies.votes' => function ($query) {
+                if (Auth::check()) {
+                    $query->where('user_id', Auth::id());
+                }
+            },
+            'votes' => function ($query) {
+                if (Auth::check()) {
+                    $query->where('user_id', Auth::id());
+                }
+            }
+        ])->findOrFail($id);
+
+        // Only select necessary columns for recent questions
+        $recent_questions = Question::select('id', 'Title', 'Upvotes', 'Answered', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->limit(4)
+            ->get();
+
         // Get user's vote status for the question
         $userVote = null;
         if (Auth::check()) {
-            $userVote = $question->votes()->where('user_id', Auth::id())->first();
+            $userVote = $question->votes->first();
         }
-        
+
         // Get user's vote status for each reply
         $replyVotes = [];
         if (Auth::check()) {
             foreach ($question->replies as $reply) {
-                $vote = $reply->votes()->where('user_id', Auth::id())->first();
+                $vote = $reply->votes->first();
                 if ($vote) {
                     $replyVotes[$reply->id] = $vote->vote_type;
                 }
             }
         }
-        
+
         return view('questions.show', compact('question', 'recent_questions', 'userVote', 'replyVotes'));
     }
 
@@ -187,49 +243,59 @@ class QuestionController extends Controller
     public function filterByTag(Request $request)
     {
         $selectedTags = $request->input('tags');
-        $allTags = Question::all()->pluck('Tags');
 
-        $tagCounts = DB::table('questions')
-            ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
-            ->pluck('tag')
-            ->flatten()
-            ->map(fn($tag) => json_decode($tag, true))
-            ->flatten()
-            ->filter()
-            ->countBy()
-            ->sortDesc();
+        // Cache tag counts for 10 minutes
+        $tagCounts = cache()->remember('tag_counts', 600, function () {
+            return DB::table('questions')
+                ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
+                ->pluck('tag')
+                ->flatten()
+                ->map(fn($tag) => json_decode($tag, true))
+                ->flatten()
+                ->filter()
+                ->countBy()
+                ->sortDesc();
+        });
 
         $mostUsedTags = $tagCounts->keys()->take(10);
 
         if ($selectedTags) {
-            $filtered_questions = Question::where(function ($query) use ($selectedTags) {
-                foreach ($selectedTags as $tag) {
-                    $query->orWhereJsonContains('Tags', $tag);
-                }
-            })->orderBy('created_at', 'desc')->paginate(5);
+            $filtered_questions = Question::select('id', 'UserName', 'user_id', 'Title', 'Content', 'image_url', 'Upvotes', 'Tags', 'Answered', 'created_at', 'updated_at')
+                ->where(function ($query) use ($selectedTags) {
+                    foreach ($selectedTags as $tag) {
+                        $query->orWhereJsonContains('Tags', $tag);
+                    }
+                })->orderBy('created_at', 'desc')->paginate(5);
         } else {
             $filtered_questions = collect();
         }
 
-        $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
+        $all_questions = Question::select('id', 'UserName', 'user_id', 'Title', 'Content', 'image_url', 'Upvotes', 'Tags', 'Answered', 'created_at', 'updated_at')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
 
         return view('questions.index', compact('filtered_questions', 'all_questions', 'mostUsedTags', 'selectedTags'));
     }
 
     public function loadMoreTags()
     {
-        $tagCounts = DB::table('questions')
-            ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
-            ->pluck('tag')
-            ->flatten()
-            ->map(fn($tag) => json_decode($tag, true))
-            ->flatten()
-            ->filter()
-            ->countBy()
-            ->sortDesc();
+        // Cache tag counts for 10 minutes
+        $tagCounts = cache()->remember('tag_counts', 600, function () {
+            return DB::table('questions')
+                ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
+                ->pluck('tag')
+                ->flatten()
+                ->map(fn($tag) => json_decode($tag, true))
+                ->flatten()
+                ->filter()
+                ->countBy()
+                ->sortDesc();
+        });
 
         $tagsToShow = $tagCounts->keys()->take(50);
-        $all_questions = Question::orderBy('created_at', 'desc')->paginate(5);
+        $all_questions = Question::select('id', 'UserName', 'user_id', 'Title', 'Content', 'image_url', 'Upvotes', 'Tags', 'Answered', 'created_at', 'updated_at')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
 
         return view('questions.index', compact('all_questions', 'tagsToShow'));
     }

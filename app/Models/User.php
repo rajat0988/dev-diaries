@@ -62,6 +62,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendEmailVerificationNotification()
     {
-        VerifyEmailJob::dispatch($this);
+        // Since we're using QUEUE_CONNECTION=sync, dispatch immediately
+        // This ensures emails are sent right away without queue delays
+        $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
     }
 }

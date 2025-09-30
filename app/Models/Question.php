@@ -16,9 +16,16 @@ class Question extends Model
         'EmailId',
         'Title',
         'Content',
+        'image_url',
         'Upvotes',
         'Tags',
         'Answered'
+    ];
+
+    // Define which attributes should be cast
+    protected $casts = [
+        'Tags' => 'array', // Automatically cast JSON to array
+        'Answered' => 'boolean',
     ];
 
     public function votes()

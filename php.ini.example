@@ -1,0 +1,193 @@
+; ===============================================
+; PHP Configuration for Low-Resource Server
+; 0.3 CPU / 0.3 GB RAM / 100 concurrent users
+; ===============================================
+;
+; Copy relevant sections to your php.ini file
+; Usually located at:
+; - Linux: /etc/php/8.x/fpm/php.ini or /etc/php/8.x/cli/php.ini
+; - Windows: C:\php\php.ini
+;
+; After changes, restart PHP-FPM/Apache:
+; - systemctl restart php8.2-fpm
+; - systemctl restart apache2
+; ===============================================
+
+[PHP]
+
+; Memory Management
+; -----------------
+; Keep this reasonable for your RAM constraints
+memory_limit = 256M
+
+; For even lower memory, you can try:
+; memory_limit = 128M
+
+; Maximum execution time
+max_execution_time = 30
+max_input_time = 60
+
+; File Uploads
+; ------------
+upload_max_filesize = 5M
+post_max_size = 6M
+max_file_uploads = 20
+
+
+; ===============================================
+; OPcache Configuration - CRITICAL FOR PERFORMANCE
+; ===============================================
+; This alone can give you 50-80% CPU reduction!
+; ===============================================
+
+[opcache]
+
+; Enable OPcache (REQUIRED)
+opcache.enable = 1
+opcache.enable_cli = 0
+
+; Memory Settings
+; 64MB is good for small-medium apps
+opcache.memory_consumption = 64
+
+; Set to your estimated file count
+; Use: find . -name "*.php" | wc -l
+opcache.max_accelerated_files = 10000
+
+; Interned strings buffer (for repeated strings like class names)
+opcache.interned_strings_buffer = 16
+
+; Revalidation frequency (seconds)
+; How often to check if files changed
+opcache.revalidate_freq = 2
+
+; PRODUCTION ONLY: Set to 0 to never check for changes
+; This gives maximum performance but requires manual cache clear on updates
+; opcache.validate_timestamps = 0
+
+; DEVELOPMENT: Keep as 1 to auto-detect file changes
+opcache.validate_timestamps = 1
+
+; Save file comments (needed by Laravel Doctrine, PHPUnit)
+opcache.save_comments = 1
+
+; Fast shutdown
+opcache.fast_shutdown = 1
+
+; JIT Compilation (PHP 8.0+)
+; Uncomment if you're on PHP 8+
+; opcache.jit = tracing
+; opcache.jit_buffer_size = 32M
+
+
+; ===============================================
+; Realpath Cache - Reduces File System Calls
+; ===============================================
+; This caches resolved file paths
+
+realpath_cache_size = 4096K
+realpath_cache_ttl = 600
+
+
+; ===============================================
+; Session Configuration
+; ===============================================
+; Since we're using file-based sessions from .env
+
+session.save_handler = files
+session.save_path = "/tmp"
+
+; Session garbage collection
+; Clean up old sessions
+session.gc_probability = 1
+session.gc_divisor = 100
+session.gc_maxlifetime = 7200
+
+
+; ===============================================
+; Output Buffering - Reduces Memory Usage
+; ===============================================
+
+output_buffering = 4096
+implicit_flush = Off
+
+
+; ===============================================
+; Disable Unnecessary Functions (Security + Performance)
+; ===============================================
+; Uncomment if you don't need these
+
+; disable_functions = exec,passthru,shell_exec,system,proc_open,popen,curl_exec,curl_multi_exec,parse_ini_file,show_source
+
+
+; ===============================================
+; Error Handling
+; ===============================================
+
+; DEVELOPMENT
+; display_errors = On
+; error_reporting = E_ALL
+
+; PRODUCTION (use these in production!)
+display_errors = Off
+display_startup_errors = Off
+error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+log_errors = On
+error_log = /var/log/php/error.log
+
+
+; ===============================================
+; Date/Time
+; ===============================================
+
+date.timezone = UTC
+
+
+; ===============================================
+; Performance Tips
+; ===============================================
+
+; 1. Preload (PHP 7.4+)
+;    Further reduces memory and improves performance
+;    Create a preload.php file and uncomment:
+; opcache.preload = /path/to/preload.php
+; opcache.preload_user = www-data
+
+; 2. JIT (PHP 8.0+)
+;    Can give 20-30% performance boost for CPU-intensive code
+;    Already configured above, just uncomment
+
+; 3. Function JIT (PHP 8.0+)
+;    opcache.jit = function
+
+
+; ===============================================
+; Verification Commands
+; ===============================================
+;
+; Check if OPcache is enabled:
+;   php -v
+;   php -i | grep opcache
+;   php --ri opcache
+;
+; Check OPcache status (create opcache-status.php):
+;   <?php var_dump(opcache_get_status()); ?>
+;
+; Clear OPcache:
+;   opcache_reset(); // in PHP
+;   systemctl restart php8.2-fpm // or restart web server
+;
+; ===============================================
+
+
+; ===============================================
+; Expected Performance Gains
+; ===============================================
+;
+; With OPcache enabled:
+; - CPU usage: ⬇️ 50-80% reduction
+; - Memory usage: ⬇️ 20-30% reduction
+; - Request handling: ⬆️ 5-10x faster
+; - File system calls: ⬇️ 90%+ reduction
+;
+; ===============================================
