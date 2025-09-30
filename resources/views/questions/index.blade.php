@@ -51,10 +51,6 @@
                 <a href="{{ route('questions.create') }}" class="button-primary">
                     Ask a Question
                 </a>
-                <!-- Test Toast Button -->
-                <button id="test-toast" class="button-primary ml-2">
-                    Test Toast
-                </button>
             </div>
 
             <!-- Admin View: Reported Questions -->
@@ -74,6 +70,11 @@
                             <h3 class="question-card-title">{{ $question->Title }}</h3>
                             <div class="question-card-votes">{{ $question->Upvotes >= 0 ? 'Upvotes: ' . $question->Upvotes : 'Downvotes: ' . -$question->Upvotes }}</div>
                         </div>
+                        @if($question->image_url)
+                        <div class="mt-2">
+                            <img src="{{ $question->image_url }}" alt="Question preview" style="max-width: 200px; max-height: 150px; object-fit: cover; border-radius: 4px;">
+                        </div>
+                        @endif
                         <p class="question-card-answered mt-2">Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
                     </div>
                 @empty
@@ -88,11 +89,16 @@
                 @foreach ($all_questions as $question)
                     <div class="question-card">
                         <div class="flex justify-between items-center cursor-pointer">
-                            <a href="{{ route('questions.show', $question->id) }}" class="question-card-title"> 
+                            <a href="{{ route('questions.show', $question->id) }}" class="question-card-title">
                                 {{ $question->Title }}
                             </a>
                             <div class="question-card-votes">{{ $question->Upvotes >= 0 ? 'Upvotes: ' . $question->Upvotes : 'Downvotes: ' . -$question->Upvotes }}</div>
                         </div>
+                        @if($question->image_url)
+                        <div class="mt-2">
+                            <img src="{{ $question->image_url }}" alt="Question preview" style="max-width: 200px; max-height: 150px; object-fit: cover; border-radius: 4px;">
+                        </div>
+                        @endif
                         <p class="question-card-answered mt-2">Answered: {{ $question->Answered ? 'Yes' : 'No' }}</p>
                     </div>
                 @endforeach
@@ -103,24 +109,3 @@
 </div>
 
 @endsection
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const testToastBtn = document.getElementById('test-toast');
-    if (testToastBtn) {
-        testToastBtn.addEventListener('click', function() {
-            if (typeof window.showToast !== 'undefined') {
-                window.showToast('This is a test success message!', 'success');
-                setTimeout(() => {
-                    window.showToast('This is a test error message!', 'error');
-                }, 1500);
-            } else {
-                console.log('Toast system not available');
-            }
-        });
-    }
-    
-    // Check if toast system is available
-    console.log('Toast system check - available:', typeof window.showToast !== 'undefined');
-});
-</script>

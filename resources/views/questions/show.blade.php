@@ -32,11 +32,8 @@
                         <span>Created: {{ $question->created_at->diffForHumans() }}</span>
                     </div>
                     @if ($question->Tags)
-                        @php
-                            $tags = explode(',', $question->Tags);
-                        @endphp
                         <div class="question-tags">
-                            @foreach ($tags as $tag)
+                            @foreach ($question->Tags as $tag)
                             <span>{{ trim($tag) }}</span>
                             @endforeach
                         </div>
@@ -44,6 +41,13 @@
                 </div>
                 <div class="question-content">
                     <pre>{{ $question->Content }}</pre>
+
+                    @if($question->image_url)
+                    <div class="question-image mt-4">
+                        <img src="{{ $question->image_url }}" alt="Question image" style="max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0;">
+                    </div>
+                    @endif
+
                     <div class="button-container">
                         <button id="question-upvote-btn" data-question-id="{{ $question->id }}" class="btn" title="{{ isset($userVote) && $userVote && $userVote->vote_type == 1 ? 'Remove Upvote' : 'Upvote' }}">
                             @if(isset($userVote) && $userVote && $userVote->vote_type == 1)
@@ -162,7 +166,6 @@
                     </li>
                     @endforeach
                 </ul>
-                {{ $recent_questions->links() }}
             </div>
         </div>
     </div>
@@ -235,7 +238,7 @@
         // Reset button states
         $('#question-upvote-btn').html('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>');
         $('#question-downvote-btn').html('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>');
-        
+
         // Update button titles and fill icons based on user vote
         if (userVote === 1) {
             $('#question-upvote-btn').html('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>');
@@ -306,7 +309,7 @@
         // Reset button states
         $('#reply-upvote-btn-' + replyId).html('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>');
         $('#reply-downvote-btn-' + replyId).html('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>');
-        
+
         // Update button titles and fill icons based on user vote
         if (userVote === 1) {
             $('#reply-upvote-btn-' + replyId).html('<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-green-500"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>');
@@ -368,7 +371,7 @@
             console.log('Toast system not available');
         }
     }
-    
+
     // Run test when page loads
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Toast system check - available:', typeof window.showToast !== 'undefined');

@@ -27,13 +27,20 @@ class ProfileController extends Controller
     public function show($id)
     {
         $user = User::findOrFail($id);
-        
-        $questions = $user->questions()->paginate(5);
-        $replies = $user->replies()->with('question')->paginate(5);
-    
-        $uniqueReplies = $replies->getCollection()->unique('question_id');
-        $replies->setCollection($uniqueReplies);
-        
+
+        // Optimize: Select only necessary columns and paginate
+        $questions = $user->questions()
+            ->select('id', 'UserName', 'user_id', 'EmailId', 'Title', 'Upvotes', 'Answered', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+
+        // Use groupBy at DB level for better performance
+        $replies = $user->replies()
+            ->select('replies.id', 'replies.question_id', 'replies.UserName', 'replies.user_id', 'replies.EmailId', 'replies.Content', 'replies.Upvotes', 'replies.created_at')
+            ->with(['question:id,Title'])
+            ->orderBy('replies.created_at', 'desc')
+            ->paginate(5);
+
         return view('profile.show', compact('user', 'questions', 'replies'));
     }
 
