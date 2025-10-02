@@ -34,15 +34,15 @@
                     <x-lucide-sun class="h-6 w-6 hidden dark:block" />
                     <x-lucide-moon class="h-6 w-6 block dark:hidden" />
                 </button>
-                
+
                 <!-- Profile Dropdown -->
-                <button @click="dropdownOpen = !dropdownOpen" class="inline-flex items-center text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out dark:text-gray-400 dark:hover:text-gray-300">
-                    <span class="sr-only">Open user menu</span>
-                    <x-lucide-user class="h-6 w-6 border border-gray-300 rounded-full p-0.5 dark:border-gray-600" />
-                </button>
-                <!-- Dropdown Menu -->
-                <div x-show="dropdownOpen" @click.away="dropdownOpen = false" class="relative">
-                    <div class="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded-md shadow-lg dark:bg-gray-700 dark:border-gray-600">
+                <div class="relative">
+                    <button @click="dropdownOpen = !dropdownOpen" class="inline-flex items-center text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out dark:text-gray-400 dark:hover:text-gray-300">
+                        <span class="sr-only">Open user menu</span>
+                        <x-lucide-user class="h-6 w-6 border border-gray-300 rounded-full p-0.5 dark:border-gray-600" />
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div x-show="dropdownOpen" @click.away="dropdownOpen = false" class="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded-md shadow-lg z-50 dark:bg-gray-700 dark:border-gray-600">
                         <div class="p-2">
                             @if (Auth::check())
                                 <div class="font-medium text-gray-900 truncate dark:text-gray-100">{{ Auth::user()->name }}</div>
