@@ -20,9 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //To add htttps in production
+        //To add htttps in production - remove later
         if ($this->app->environment('production')) {
-            URL::forceScheme('https');
+            //URL::forceScheme('https');
         }
 
         // Optimize: Disable lazy loading in development to catch N+1 issues
