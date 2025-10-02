@@ -24,7 +24,7 @@
                     <x-lucide-sun class="h-6 w-6 hidden dark:block" />
                     <x-lucide-moon class="h-6 w-6 block dark:hidden" />
                 </button>
-                
+
                 <!-- Profile Icon (Mobile) -->
                 <div class="relative" x-data="{ mobileDropdownOpen: false }">
                     <button @click="mobileDropdownOpen = !mobileDropdownOpen" class="inline-flex items-center justify-center p-2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700 transition duration-150 ease-in-out dark:text-gray-400 dark:hover:text-gray-300">
