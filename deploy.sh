@@ -13,14 +13,19 @@ git pull
 
 # Install/Update Composer dependencies
 echo "📦 Installing Composer dependencies..."
+export COMPOSER_ALLOW_SUPERUSER=1
 composer install --no-dev --optimize-autoloader --no-interaction
 
 # Install/Update NPM dependencies and build assets
 echo "📦 Installing NPM dependencies..."
-npm ci --only=production
+npm ci
 
 echo "🔨 Building assets..."
 npm run build
+
+# Clean up dev dependencies after build
+echo "🧹 Removing dev dependencies..."
+npm prune --omit=dev
 
 # Put application in maintenance mode
 echo "🔒 Enabling maintenance mode..."
