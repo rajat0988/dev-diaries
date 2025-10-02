@@ -9,7 +9,7 @@ echo "🚀 Starting deployment..."
 
 # Pull latest changes from repository
 echo "📥 Pulling latest changes from Git..."
-git pull origin main
+git pull
 
 # Install/Update Composer dependencies
 echo "📦 Installing Composer dependencies..."
