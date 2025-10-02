@@ -64,7 +64,7 @@ php artisan optimize:clear || true
 
 # Restart PHP-FPM
 echo "🔄 Restarting PHP-FPM..."
-sudo systemctl restart php8.2-fpm
+sudo systemctl restart php8.3-fpm
 
 # Reload Nginx (reload is better than restart for zero downtime)
 echo "🔄 Reloading Nginx..."
