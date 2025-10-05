@@ -1,21 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>Reported Questions</h1>
-    <ol>
-        @foreach($reportedQuestions as $question)
-        <li>Quesiton: <a style="color: #105aa3;" href="{{ route('questions.show', $question->id) }}">{{ $question->Title }}</a></li>
-            {{-- <li>{{ $question->Title }} (Reported at: {{ $question->updated_at }})</li> --}}
-        @endforeach
-    </ol>
-
-    <h1>Reported Replies</h1>
-    <ul>
-        @foreach($reportedReplies as $reply)
-        <li>Reply on Quesiton: <a style="color: #105aa3;" href="{{ route('questions.show', $question->id) }}">{{ $reply->Content }}</a></li>
-        @endforeach
-    </ul>
-@endsection
+@vite('resources/css/showQuestions.css')
 
 <div class="questions-index-container">
     <!-- Page Header -->
@@ -70,7 +56,7 @@
                                             <line x1="12" y1="9" x2="12" y2="13"></line>
                                             <line x1="12" y1="17" x2="12.01" y2="17"></line>
                                         </svg>
-                                        Reported {{ $question->updated_at->diffForHumans() }}
+                                        Reported {{ $question->updated_at ? $question->updated_at->diffForHumans() : 'recently' }}
                                     </span>
                                 </div>
                             </div>
@@ -127,7 +113,7 @@
                                             <line x1="12" y1="9" x2="12" y2="13"></line>
                                             <line x1="12" y1="17" x2="12.01" y2="17"></line>
                                         </svg>
-                                        Reported {{ $reply->updated_at->diffForHumans() }}
+                                        Reported {{ $reply->updated_at ? $reply->updated_at->diffForHumans() : 'recently' }}
                                     </span>
                                 </div>
                                 <p class="reply-preview">{{ Str::limit($reply->Content, 200) }}</p>
@@ -156,4 +142,28 @@
         </div>
     </div>
 </div>
+            <!-- Pagination -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        {{-- Show counts --}}
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Showing {{ $reportedQuestions->firstItem() ?? 0 }} - {{ $reportedQuestions->lastItem() ?? 0 }} of {{ $reportedQuestions->total() }} reported questions</p>
+                    </div>
+                    <div>
+                        {{ $reportedQuestions->links() }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Showing {{ $reportedReplies->firstItem() ?? 0 }} - {{ $reportedReplies->lastItem() ?? 0 }} of {{ $reportedReplies->total() }} reported replies</p>
+                    </div>
+                    <div>
+                        {{ $reportedReplies->links() }}
+                    </div>
+                </div>
+            </div>
+
 @endsection

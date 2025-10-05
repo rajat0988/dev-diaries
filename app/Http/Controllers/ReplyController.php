@@ -69,9 +69,9 @@ class ReplyController extends Controller
     {
         $reply = Reply::findOrFail($id);
         $user = Auth::user();
-    
+
         $existingVote = $reply->votes()->where('user_id', $user->id)->first();
-    
+
         if ($existingVote) {
             if ($existingVote->vote_type == 1) {
                 // User has already upvoted, so remove the vote
@@ -95,10 +95,10 @@ class ReplyController extends Controller
             $message = 'Reply upvoted successfully!';
             $userVote = 1;
         }
-    
+
         // Refresh the reply to get updated upvotes count
         $reply->refresh();
-    
+
         // Check if it's an AJAX request
         if (request()->wantsJson() || request()->ajax()) {
             return response()->json([
@@ -107,17 +107,17 @@ class ReplyController extends Controller
                 'userVote' => $userVote
             ]);
         }
-    
+
         return redirect()->back()->with('success', $message);
     }
-    
+
     public function downvote($id)
     {
         $reply = Reply::findOrFail($id);
         $user = Auth::user();
-    
+
         $existingVote = $reply->votes()->where('user_id', $user->id)->first();
-    
+
         if ($existingVote) {
             if ($existingVote->vote_type == 0) {
                 // User has already downvoted, so remove the vote
@@ -141,10 +141,10 @@ class ReplyController extends Controller
             $message = 'Reply downvoted successfully!';
             $userVote = 0;
         }
-    
+
         // Refresh the reply to get updated upvotes count
         $reply->refresh();
-    
+
         // Check if it's an AJAX request
         if (request()->wantsJson() || request()->ajax()) {
             return response()->json([
@@ -153,7 +153,7 @@ class ReplyController extends Controller
                 'userVote' => $userVote
             ]);
         }
-    
+
         return redirect()->back()->with('success', $message);
     }
 
