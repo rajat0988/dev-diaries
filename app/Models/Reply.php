@@ -15,6 +15,7 @@ class Reply extends Model
         'UserName',
         'EmailId',
         'Content',
+        'image_url',
         'Upvotes'
     ];
 

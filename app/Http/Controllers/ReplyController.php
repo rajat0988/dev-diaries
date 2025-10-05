@@ -8,6 +8,7 @@ use App\Models\Reply;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Cloudinary\Cloudinary;
 
 class ReplyController extends Controller
 {
@@ -15,10 +16,37 @@ class ReplyController extends Controller
     {
         $request->validate([
             'Content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // Max 5MB
         ]);
 
-        $user = Auth::user();;
+        $user = Auth::user();
         $question = Question::findOrFail($questionId);
+
+        // Handle image upload to Cloudinary
+        $imageUrl = null;
+        if ($request->hasFile('image')) {
+            try {
+                $cloudinary = new Cloudinary([
+                    'cloud' => [
+                        'cloud_name' => config('cloudinary.cloud_name'),
+                        'api_key' => config('cloudinary.api_key'),
+                        'api_secret' => config('cloudinary.api_secret'),
+                    ]
+                ]);
+
+                $uploadedFileUrl = $cloudinary->uploadApi()->upload(
+                    $request->file('image')->getRealPath(),
+                    [
+                        'folder' => 'dev-diaries/replies',
+                        'resource_type' => 'image'
+                    ]
+                );
+
+                $imageUrl = $uploadedFileUrl['secure_url'];
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Image upload failed: ' . $e->getMessage())->withInput();
+            }
+        }
 
         $reply = new Reply;
         $reply->question_id = $questionId;
@@ -26,6 +54,7 @@ class ReplyController extends Controller
         $reply->user_id = Auth::id();
         $reply->EmailId = $user->email;
         $reply->Content = $request->input('Content');
+        $reply->image_url = $imageUrl;
         $reply->Upvotes = 0;
         $reply->save();
 

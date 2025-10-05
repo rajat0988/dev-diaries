@@ -15,7 +15,7 @@ class AdminController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        $reportedReplies = Reply::select('id', 'question_id', 'UserName', 'user_id', 'Content', 'Upvotes', 'reported', 'created_at')
+        $reportedReplies = Reply::select('id', 'question_id', 'UserName', 'user_id', 'Content', 'image_url', 'Upvotes', 'reported', 'created_at')
             ->where('reported', true)
             ->with(['question:id,Title'])
             ->orderBy('created_at', 'desc')

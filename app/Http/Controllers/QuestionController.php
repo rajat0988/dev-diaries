@@ -107,7 +107,7 @@ class QuestionController extends Controller
         // Eager load replies with their votes, and question votes
         $question = Question::with([
             'replies' => function ($query) {
-                $query->select('id', 'question_id', 'UserName', 'user_id', 'EmailId', 'Content', 'Upvotes', 'created_at', 'updated_at')
+                $query->select('id', 'question_id', 'UserName', 'user_id', 'EmailId', 'Content', 'image_url', 'Upvotes', 'created_at', 'updated_at')
                     ->orderBy('created_at', 'asc');
             },
             'replies.votes' => function ($query) {
