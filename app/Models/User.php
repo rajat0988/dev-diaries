@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Jobs\VerifyEmailJob;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -62,9 +61,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendEmailVerificationNotification()
     {
-        // Send verification email after the HTTP response is returned to the client,
-        // so the request doesn't block or hit Nginx/PHP-FPM timeouts. This does NOT
-        // require a queue worker and runs in the same PHP process after response.
-        VerifyEmailJob::dispatchAfterResponse($this);
+        // Since we're using QUEUE_CONNECTION=sync, dispatch immediately
+        // This ensures emails are sent right away without queue delays
+        $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
     }
 }
