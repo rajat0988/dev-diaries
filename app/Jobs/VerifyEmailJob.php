@@ -56,7 +56,40 @@ class VerifyEmailJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->user->notify(new VerifyEmail);
+        try {
+            $this->user->notify(new VerifyEmail);
+
+            Log::info('Verification email dispatched (after response).', [
+                'user_id' => $this->user->id,
+                'email' => $this->user->email,
+                'mailer' => config('mail.default'),
+                'smtp' => [
+                    'host' => config('mail.mailers.smtp.host'),
+                    'port' => config('mail.mailers.smtp.port'),
+                    'encryption' => config('mail.mailers.smtp.encryption'),
+                    'timeout' => config('mail.mailers.smtp.timeout'),
+                ],
+                'from' => config('mail.from.address'),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Verification email failed to send.', [
+                'user_id' => $this->user->id,
+                'email' => $this->user->email,
+                'error' => $e->getMessage(),
+                'code' => $e->getCode(),
+                'mailer' => config('mail.default'),
+                'smtp' => [
+                    'host' => config('mail.mailers.smtp.host'),
+                    'port' => config('mail.mailers.smtp.port'),
+                    'encryption' => config('mail.mailers.smtp.encryption'),
+                    'timeout' => config('mail.mailers.smtp.timeout'),
+                ],
+                'from' => config('mail.from.address'),
+            ]);
+
+            // Re-throw to mark job as failed and trigger the failed() handler
+            throw $e;
+        }
     }
 
     /**
