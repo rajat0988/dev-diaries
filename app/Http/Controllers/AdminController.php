@@ -10,12 +10,12 @@ class AdminController extends Controller
     public function reportedItems()
     {
         // Use pagination to avoid loading all reported items at once
-        $reportedQuestions = Question::select('id', 'UserName', 'user_id', 'Title', 'Content', 'Upvotes', 'reported', 'created_at')
+        $reportedQuestions = Question::select('id', 'UserName', 'user_id', 'Title', 'Content', 'Upvotes', 'reported', 'created_at', 'updated_at')
             ->where('reported', true)
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        $reportedReplies = Reply::select('id', 'question_id', 'UserName', 'user_id', 'Content', 'Upvotes', 'reported', 'created_at')
+        $reportedReplies = Reply::select('id', 'question_id', 'UserName', 'user_id', 'Content', 'image_url', 'Upvotes', 'reported', 'created_at', 'updated_at')
             ->where('reported', true)
             ->with(['question:id,Title'])
             ->orderBy('created_at', 'desc')

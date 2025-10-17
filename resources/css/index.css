@@ -1,8 +1,8 @@
 /* resources/css/index.css */
 
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /* Base Styles */
 body {
@@ -59,9 +59,9 @@ body {
 /* Primary Button */
 .button-primary {
     border-radius: 20px;
-    border: 1px solid #FF4B2B;
-    background-color: #FF4B2B;
-    color: #FFFFFF;
+    border: 1px solid #ff4b2b;
+    background-color: #ff4b2b;
+    color: #ffffff;
     font-size: 14px;
     font-weight: bold;
     padding: 12px 24px;
@@ -213,8 +213,6 @@ body {
 .dark .status-error {
     @apply bg-red-900 text-red-200;
 }
-
-
 
 /* Vote Buttons */
 .upvote-btn,

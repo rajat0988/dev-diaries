@@ -1,71 +1,147 @@
 @extends('layouts.app')
 
 @section('content')
-
     <head>
         @vite('resources/css/profile.css')
     </head>
 
-    <div class="page-content page-container" id="page-content">
-        <div class="padding">
-            <div class="row container d-flex justify-content-center">
-                <div class="col-xl-6 col-md-12">
-                    <div class="card user-card-full">
-                        <div class="row m-l-0 m-r-0">
-                            <div class="col-sm-4 bg-c-lite-green user-profile">
-                                <div class="card-block text-center text-white">
-                                    <div class="m-b-25">
-                                        <img src="https://img.icons8.com/bubbles/100/000000/user.png" class="img-radius"
-                                            alt="User-Profile-Image">
-                                    </div>
-                                    <h6 class="f-w-600">{{ $user->name }}'s Profile</h6>
-                                    <p>Student</p>
-                                    <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
-                                </div>
-                            </div>
-                            <div class="col-sm-8">
-                                <div class="card-block">
-                                    <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Information</h6>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <p class="m-b-10 f-w-600">Email</p>
-                                            <h6 class="text-muted f-w-400">{{ $user->email }}</h6>
-                                        </div>
-                                    </div>
-                                    <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Activity</h6>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <p class="m-b-10 f-w-600">Questions Asked: {{ $questions->total() }}</p>
-                                            <p class="m-b-10 f-w-600">Questions asked : </p>
-                                            @foreach ($questions as $question)
-                                                <h6 class="text-muted f-w-400">
-                                                    <a
-                                                        href="{{ route('questions.show', $question->id) }}">{{ $question->Title }}</a>
-                                                </h6>
-                                            @endforeach
-                                            <div class="pagination">
-                                                {{ $questions->links() }}
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <p class="m-b-10 f-w-600">Replies Given: {{ $replies->total() }}</p>
-                                            @foreach ($replies as $reply)
-                                                <h6 class="text-muted f-w-400">Reply to question:
-                                                    <a href="{{ route('questions.show', $reply->question_id) }}">
-                                                        {{ $reply->question->Title }}
-                                                    </a>
-                                                    <p>{{ $reply->Content }}</p>
-                                                </h6>
-                                            @endforeach
-                                        </div>
-                                        <div class="pagination">
-                                            {{ $replies->links() }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    <div class="profile-container">
+        <!-- Profile Header Card -->
+        <div class="profile-header-card">
+            <div class="profile-header-gradient">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar">
+                        <img src="https://img.icons8.com/bubbles/100/000000/user.png" alt="User Profile Image">
+                    </div>
+                    <h1 class="profile-name">{{ $user->name }}</h1>
+                    <p class="profile-role">Student Developer</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ $questions->total() }}</span>
+                            <span class="stat-label">Questions</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number">{{ $replies->total() }}</span>
+                            <span class="stat-label">Replies</span>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Content Grid -->
+        <div class="profile-content-grid">
+            <!-- Information Card -->
+            <div class="profile-info-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Information
+                </h2>
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ $user->email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Member Since</span>
+                    <span class="info-value">{{ $user->created_at->format('M d, Y') }}</span>
+                </div>
+            </div>
+
+            <!-- Questions Card -->
+            <div class="profile-activity-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Questions Asked ({{ $questions->total() }})
+                </h2>
+                <div class="activity-list">
+                    @forelse ($questions as $question)
+                        <div class="activity-item">
+                            <a href="{{ route('questions.show', $question->id) }}" class="activity-link">
+                                <div class="activity-content">
+                                    <h3 class="activity-title">{{ $question->Title }}</h3>
+                                    <div class="activity-meta">
+                                        <span class="meta-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            {{ $question->created_at->diffForHumans() }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                                            </svg>
+                                            {{ $question->Upvotes }} votes
+                                        </span>
+                                        @if($question->Answered)
+                                            <span class="meta-badge answered">Answered</span>
+                                        @else
+                                            <span class="meta-badge unanswered">Open</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @empty
+                        <div class="no-activity">
+                            <p>No questions asked yet.</p>
+                        </div>
+                    @endforelse
+                </div>
+                <div class="pagination-wrapper">
+                    {{ $questions->links() }}
+                </div>
+            </div>
+
+            <!-- Replies Card -->
+            <div class="profile-activity-card">
+                <h2 class="section-title">
+                    <svg class="section-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Replies Given ({{ $replies->total() }})
+                </h2>
+                <div class="activity-list">
+                    @forelse ($replies as $reply)
+                        <div class="activity-item">
+                            <a href="{{ route('questions.show', $reply->question_id) }}" class="activity-link">
+                                <div class="activity-content">
+                                    <h3 class="activity-title">Reply to: {{ $reply->question->Title }}</h3>
+                                    <p class="reply-preview">{{ Str::limit($reply->Content, 150) }}</p>
+                                    <div class="activity-meta">
+                                        <span class="meta-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg>
+                                            {{ $reply->created_at->diffForHumans() }}
+                                        </span>
+                                        <span class="meta-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                                            </svg>
+                                            {{ $reply->Upvotes }} votes
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @empty
+                        <div class="no-activity">
+                            <p>No replies given yet.</p>
+                        </div>
+                    @endforelse
+                </div>
+                <div class="pagination-wrapper">
+                    {{ $replies->links() }}
                 </div>
             </div>
         </div>

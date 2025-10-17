@@ -97,6 +97,13 @@
                     </div>
                     <div class="reply-content">
                         <pre>{{ $reply->Content }}</pre>
+
+                        @if($reply->image_url)
+                        <div class="mt-3">
+                            <img src="{{ $reply->image_url }}" alt="Reply image" style="max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0;">
+                        </div>
+                        @endif
+
                         <div class="button-container">
                             <button id="reply-upvote-btn-{{ $reply->id }}" data-reply-id="{{ $reply->id }}" class="btn" title="{{ isset($replyVotes[$reply->id]) && $replyVotes[$reply->id] == 1 ? 'Remove Upvote' : 'Upvote' }}">
                                 @if(isset($replyVotes[$reply->id]) && $replyVotes[$reply->id] == 1)
@@ -140,12 +147,48 @@
             <!-- Reply Form -->
             <div class="reply-form-box">
                 <h4>Post Your Reply</h4>
-                <form action="{{ route('replies.store', $question->id) }}" method="POST">
+
+                @if ($errors->any())
+                <div class="status-message status-error mb-4">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                <form action="{{ route('replies.store', $question->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
                         <label for="Content">Your Answer:</label>
-                        <textarea id="Content" name="Content" class="input-text" rows="5" required></textarea>
+                        <textarea id="Content" name="Content" class="input-text" rows="5" required>{{ old('Content') }}</textarea>
                     </div>
+
+                    <!-- Image Upload for Reply -->
+                    <div class="form-group">
+                        <label for="reply-image" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                            Attach Image <span class="text-xs font-normal text-gray-500 dark:text-gray-400">(optional)</span>
+                        </label>
+                        <div class="flex flex-col gap-2">
+                            <input
+                                type="file"
+                                id="reply-image"
+                                name="image"
+                                accept="image/*"
+                                class="block w-full text-sm text-gray-600 dark:text-gray-300
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-orange-700 file:text-white
+                                    hover:file:bg-orange-800
+                                    dark:file:bg-orange-600 dark:hover:file:bg-orange-700
+                                    file:cursor-pointer file:transition"
+                            >
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Accepted formats: JPEG, PNG, JPG, GIF, WEBP • Max size: 5MB</p>
+                        </div>
+                    </div>
+
                     <button type="submit" class="submit-btn">Submit Reply</button>
                 </form>
             </div>

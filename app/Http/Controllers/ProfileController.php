@@ -36,7 +36,7 @@ class ProfileController extends Controller
 
         // Use groupBy at DB level for better performance
         $replies = $user->replies()
-            ->select('replies.id', 'replies.question_id', 'replies.UserName', 'replies.user_id', 'replies.EmailId', 'replies.Content', 'replies.Upvotes', 'replies.created_at')
+            ->select('replies.id', 'replies.question_id', 'replies.UserName', 'replies.user_id', 'replies.EmailId', 'replies.Content', 'replies.image_url', 'replies.Upvotes', 'replies.created_at')
             ->with(['question:id,Title'])
             ->orderBy('replies.created_at', 'desc')
             ->paginate(5);
