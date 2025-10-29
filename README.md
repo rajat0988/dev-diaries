@@ -13,3 +13,7 @@ To set up this project localy follow these steps:
 11. visit your site at "http://localhost:8000" in your browser.
 
 ~Rajat Malhotra
+
+
+
+#implement nodemailer for mails

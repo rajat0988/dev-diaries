@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
                     }
                 }
             ],
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
@@ -42,7 +42,9 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-        return redirect()->route('register');
+
+        // Redirect back with success message
+        return redirect()->route('register')->with('status', 'Registration successful! Please sign in with your credentials.');
         // return redirect()->route('verification.notice');
     }
 }

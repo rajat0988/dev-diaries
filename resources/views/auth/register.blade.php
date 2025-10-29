@@ -1,61 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    @vite('resources/css/login.css')
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets/login.css') }}" /> --}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Dev Diaries</title>
+    @vite(['resources/css/app.css', 'resources/css/auth.css'])
 </head>
+<body>
+    <div id="app-container" class="lg:flex">
+        <!-- LEFT PANEL -->
+        <div class="lg:w-1/2 p-6 sm:p-12 flex flex-col justify-between">
+            <div class="mb-10 lg:mb-0">
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-1">Dev Diaries</h2>
+                    <p class="text-sm text-gray-600 leading-relaxed">An open platform for JIMS students to discuss tech-content</p>
+                </div>
 
-<h2>Dev Diaries By JIMS</h2>
-<div class="container" id="container">
-	<div class="form-container sign-up-container">
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-            <h1>Create Account</h1>
-            <span>using your assigned JIMS ID for registration</span>
-            <input type="text" name="name" placeholder="Name" />
-            <input type="email" name="email" placeholder="Email" />
-            <input type="password" name="password" placeholder="Password" />
-            <button type="submit">Sign Up</button>
-        </form>
-	</div>
-	<div class="form-container sign-in-container">
-		<form method="POST" action="{{ route('login') }}">
-            @csrf
-			<h1>Sign in</h1>
-			<span>using your assigned Dev Diaries account</span>
-			<input type="email" name="email" placeholder="Email" />
-			<input type="password" name="password" placeholder="Password" />
-			<label style="display: flex; align-items: center; font-size: 14px; cursor: pointer;">
-				<input type="checkbox" name="remember" style="margin-right: 5px;"> Remember Me
-			</label>
-			<a href="{{ route('password.request') }}"">Forgot your password?</a>
-			<button>Sign In</button>
-		</form>
-	</div>
-	<div class="overlay-container">
-		<div class="overlay">
-			<div class="overlay-panel overlay-left">
-				<h1>Welcome Back!</h1>
-				<p>To keep connected with us please login with your personal information.</p>
-				<button class="ghost" id="signIn">Sign In</button>
-			</div>
-			<div class="overlay-panel overlay-right">
-				<h1>Hi, there!</h1>
-				<p>Enter your personal details and come onboard with us.</p>
-				<button class="ghost" id="signUp">Sign Up</button>
-			</div>
-		</div>
-	</div>
-</div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mt-15 mb-2">
+                    <span id="welcome-title">Welcome Back</span>
+                </h1>
+                <p class="text-gray-500 mb-8">Please enter your details</p>
 
-<script>
-    const signUpButton = document.getElementById('signUp');
-    const signInButton = document.getElementById('signIn');
-    const container = document.getElementById('container');
+                <div class="flex bg-gray-100 rounded-xl p-1 max-w-sm mb-8 font-semibold text-sm">
+                    <button id="signin-tab" class="w-1/2 py-2 px-4 rounded-lg tab-active transition-colors duration-200" onclick="switchForm('login')">Sign In</button>
+                    <button id="signup-tab" class="w-1/2 py-2 px-4 rounded-lg text-gray-500 hover:text-gray-900 transition-colors duration-200" onclick="switchForm('register')">Signup</button>
+                </div>
+            </div>
 
-    signUpButton.addEventListener('click', () => {
-    	container.classList.add("right-panel-active");
-    });
+            <!-- Display Success Messages -->
+            @if (session('status'))
+                <div class="success-message w-full max-w-sm mb-4">
+                    {{ session('status') }}
+                </div>
+            @endif
 
-    signInButton.addEventListener('click', () => {
-    	container.classList.remove("right-panel-active");
-    });
-</script>
+            <!-- LOGIN FORM -->
+            <div id="login-form-container" class="w-full max-w-sm transition-opacity duration-300">
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="login_email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <div class="relative">
+                            <input id="login_email" class="custom-input block w-full pl-10 pr-12 py-2 border rounded-xl placeholder-gray-400 text-gray-900" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" />
+                        </div>
+                        @error('email')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="login_password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <input id="login_password" class="custom-input block w-full pl-4 py-2 border rounded-xl placeholder-gray-400 text-gray-900" type="password" name="password" required autocomplete="current-password" placeholder="••••••••" />
+                        </div>
+                        @error('password')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="flex items-center justify-between text-sm mt-6">
+                        <label for="remember_me" class="inline-flex items-center">
+                            <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-FF4B2B shadow-sm focus:ring-FF4B2B" name="remember">
+                            <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                        </label>
+                        @if (Route::has('password.request'))
+                            <a href="{{ route('password.request') }}" class="text-sm text-gray-600 hover:text-gray-900 underline">Forgot your password?</a>
+                        @endif
+                    </div>
+
+                    <button type="submit" class="w-full mt-6 py-3 px-4 button-primary text-white font-bold rounded-xl transition duration-150 shadow-lg">Continue</button>
+                </form>
+            </div>
+
+            <!-- REGISTER FORM -->
+            <div id="register-form-container" class="w-full max-w-sm transition-opacity duration-300 hidden">
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="register_name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input id="register_name" class="custom-input block w-full pl-4 py-2 border rounded-xl placeholder-gray-400 text-gray-900" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" />
+                        @error('name')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="register_email" class="block text-sm font-medium text-gray-700 mb-1">Email Address (JIMS)</label>
+                        <input id="register_email" class="custom-input block w-full pl-4 py-2 border rounded-xl placeholder-gray-400 text-gray-900" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" placeholder="yourname@jimsindia.org" />
+                        @error('email')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="register_password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input id="register_password" class="custom-input block w-full pl-4 py-2 border rounded-xl placeholder-gray-400 text-gray-900" type="password" name="password" required autocomplete="new-password" placeholder="••••••••" />
+                        @error('password')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input id="password_confirmation" class="custom-input block w-full pl-4 py-2 border rounded-xl placeholder-gray-400 text-gray-900" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="••••••••" />
+                    </div>
+
+                    <button type="submit" class="w-full py-3 px-4 button-primary text-white font-bold rounded-xl transition duration-150 shadow-lg">Register</button>
+                </form>
+            </div>
+
+            <div class="w-full max-w-sm mt-6">
+                <p class="text-xs text-center text-gray-400 mt-20 max-w-xs mx-auto">
+                    Join thousands of curious minds on our campus Tech Forum. Log in to ask questions, share insights, and collaborate with fellow students to solve problems and grow together.
+                </p>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel-bg lg:w-1/2 hidden lg:flex">
+            <div class="safe-icon">
+                <div class="dial"></div>
+                <div class="handle"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form-container');
+        const registerForm = document.getElementById('register-form-container');
+        const signinTab = document.getElementById('signin-tab');
+        const signupTab = document.getElementById('signup-tab');
+        const welcomeTitle = document.getElementById('welcome-title');
+
+        function switchForm(mode) {
+           if (mode === 'login') {
+               loginForm.classList.remove('hidden');
+               registerForm.classList.add('hidden');
+               signinTab.classList.add('tab-active');
+               signupTab.classList.remove('tab-active');
+               signupTab.classList.add('text-gray-500');
+               welcomeTitle.textContent = 'Welcome Back';
+           } else if (mode === 'register') {
+               loginForm.classList.add('hidden');
+               registerForm.classList.remove('hidden');
+               signupTab.classList.add('tab-active');
+               signinTab.classList.remove('tab-active');
+               signinTab.classList.add('text-gray-500');
+               welcomeTitle.textContent = 'Join Tech Forum';
+           }
+        }
+
+        // Check if there are validation errors and switch to appropriate form
+        window.onload = () => {
+            @if ($errors->has('name') || ($errors->has('email') && old('email')) || ($errors->has('password') && old('name')))
+                switchForm('register');
+            @else
+                switchForm('login');
+            @endif
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+/* Authentication Page Styles */
+
+/* Custom styles for the 3D aesthetic on the right side */
+.right-panel-bg {
+    background: linear-gradient(135deg, #ffe5e0 0%, #ffb3a0 50%, #ff8c66 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+}
+
+.safe-icon {
+    width: 250px;
+    height: 250px;
+    background: #ff4b2b; /* Main theme */
+    border-radius: 20px;
+    box-shadow: 0 40px 60px rgba(0, 0, 0, 0.2), 0 0 100px rgba(255, 75, 43, 0.5);
+    transform: rotateY(15deg) rotateX(10deg);
+    position: relative;
+    animation: float 5s ease-in-out infinite alternate;
+}
+
+.dial {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #cc3a21; /* Darker shade */
+    border: 8px solid #ff7b5a; /* Lighter ring */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100px;
+    height: 10px;
+    background: #f0e5e0; /* Grayish handle */
+    transform: translate(-50%, -50%) rotate(45deg);
+    border-radius: 5px;
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0) rotateY(15deg) rotateX(10deg);
+    }
+    100% {
+        transform: translate(10px, -10px) rotateY(15deg) rotateX(10deg);
+    }
+}
+
+#app-container {
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+    background-color: white;
+}
+
+.custom-input {
+    border-color: #e5e7eb;
+}
+
+.custom-input:focus {
+    border-color: #ff4b2b;
+    box-shadow: 0 0 0 1px #ff4b2b;
+    outline: none;
+}
+
+.tab-active {
+    background-color: white;
+    color: #ff4b2b;
+    box-shadow: 0 2px 6px rgba(255, 75, 43, 0.3);
+}
+
+.button-primary {
+    background-color: #ff4b2b;
+}
+
+.button-primary:hover {
+    background-color: #e63f20;
+}
+
+.error-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.success-message {
+    color: #16a34a;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background-color: #f0fdf4;
+    border-radius: 0.5rem;
+    border: 1px solid #bbf7d0;
+}
+
+/* Custom margin for spacing */
+.mt-15 {
+    margin-top: 3.75rem; /* 60px */
+}
