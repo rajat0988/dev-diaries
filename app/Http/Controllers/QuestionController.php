@@ -12,7 +12,19 @@ class QuestionController extends Controller
 {
     public function create()
     {
-        return view('questions.create');
+        // Fetch all tags data robustly
+        // Using PHP processing instead of raw JSON queries to ensure compatibility and correctness
+        $allTags = cache()->remember('all_tags_list', 60, function () {
+            return Question::all('Tags')->flatMap(function ($question) {
+                return $question->Tags ?? [];
+            })
+                ->map(fn($tag) => strtolower(trim($tag)))
+                ->unique()
+                ->values()
+                ->all();
+        });
+
+        return view('questions.create', compact('allTags'));
     }
 
     public function store(Request $request)
@@ -28,13 +40,26 @@ class QuestionController extends Controller
         $user = Auth::user();
         $tags = $request->input('Tags', []);
 
+        // Flatten tags if they come nested (e.g. from the new frontend structure if changed, though we'll keep Tags[] name)
+        // With the new frontend, custom tags are gone, but let's keep the backend robust for a moment.
+        // Actually, the new frontend will send everything in Tags[].
+
+        // Remove 'custom_tags' processing if we are sure, but keeping it won't hurt if we remove the input from view.
+        // But for clarity let's clean it up as we update the logic.
+
+        // Normalize to lowercase
+        $tags = array_map(function ($tag) {
+            return strtolower(trim($tag));
+        }, $tags);
+
         $customTags = $request->input('custom_tags');
         if ($customTags) {
             $customTagsArray = array_map('trim', explode(',', $customTags));
+            $customTagsArray = array_map('strtolower', $customTagsArray);
             $tags = array_merge($tags, $customTagsArray);
         }
 
-        $tags = array_unique($tags);
+        $tags = array_values(array_unique($tags)); // Re-index array
 
         // Handle image upload to Cloudinary
         $imageUrl = null;
@@ -80,18 +105,7 @@ class QuestionController extends Controller
     public function index()
     {
         // Cache tag counts for 10 minutes to reduce DB load
-        $tagCounts = cache()->remember('tag_counts', 600, function () {
-            return DB::table('questions')
-                ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
-                ->pluck('tag')
-                ->flatten()
-                ->map(fn($tag) => json_decode($tag, true))
-                ->flatten()
-                ->filter()
-                ->countBy()
-                ->sortDesc();
-        });
-
+        $tagCounts = $this->getCachedTagCounts();
         $mostUsedTags = $tagCounts->keys()->take(5);
 
         // Optimize: Select only needed columns, eager load user for questions
@@ -240,12 +254,12 @@ class QuestionController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
-    public function filterByTag(Request $request)
+    /**
+     * Helper to get cached tag counts to avoid repetitive db hits
+     */
+    private function getCachedTagCounts()
     {
-        $selectedTags = $request->input('tags');
-
-        // Cache tag counts for 10 minutes
-        $tagCounts = cache()->remember('tag_counts', 600, function () {
+        return cache()->remember('tag_counts', 300, function () { // 5 minutes cache
             return DB::table('questions')
                 ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
                 ->pluck('tag')
@@ -256,7 +270,18 @@ class QuestionController extends Controller
                 ->countBy()
                 ->sortDesc();
         });
+    }
 
+    public function filterByTag(Request $request)
+    {
+        $selectedTags = $request->input('tags');
+
+        // Normalize selected tags to lowercase for searching
+        if ($selectedTags && is_array($selectedTags)) {
+            $selectedTags = array_map('strtolower', $selectedTags);
+        }
+
+        $tagCounts = $this->getCachedTagCounts();
         $mostUsedTags = $tagCounts->keys()->take(10);
 
         if ($selectedTags) {
@@ -277,22 +302,30 @@ class QuestionController extends Controller
         return view('questions.index', compact('filtered_questions', 'all_questions', 'mostUsedTags', 'selectedTags'));
     }
 
+    public function searchTags(Request $request)
+    {
+        $query = strtolower($request->get('query', ''));
+
+        // Use the same cached tag counts source for consistency and performance
+        $tagCounts = $this->getCachedTagCounts();
+        $allTags = $tagCounts->keys();
+
+        if (empty($query)) {
+            return response()->json($allTags->take(10)->values());
+        }
+
+        $filtered = $allTags->filter(function ($tag) use ($query) {
+            return str_contains(strtolower($tag), $query);
+        })->take(10)->values(); // Increased from 5 to 10 as requested
+
+        return response()->json($filtered);
+    }
+
     public function loadMoreTags()
     {
-        // Cache tag counts for 10 minutes
-        $tagCounts = cache()->remember('tag_counts', 600, function () {
-            return DB::table('questions')
-                ->select(DB::raw('json_extract(Tags, "$[*]") as tag'))
-                ->pluck('tag')
-                ->flatten()
-                ->map(fn($tag) => json_decode($tag, true))
-                ->flatten()
-                ->filter()
-                ->countBy()
-                ->sortDesc();
-        });
-
+        $tagCounts = $this->getCachedTagCounts();
         $tagsToShow = $tagCounts->keys()->take(50);
+
         $all_questions = Question::select('id', 'UserName', 'user_id', 'Title', 'Content', 'image_url', 'Upvotes', 'Tags', 'Answered', 'created_at', 'updated_at')
             ->orderBy('created_at', 'desc')
             ->paginate(5);

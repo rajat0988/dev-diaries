@@ -2,7 +2,6 @@
 
 @section('content')
 @php
-    $tags = ['C', 'DBMS', 'JavaScript', 'CSS', 'C++'];
     $selectedTags = collect(old('Tags', []))->map(fn ($value) => (string) $value)->all();
 @endphp
 
@@ -19,9 +18,9 @@
     </div>
 
     <!-- Main Form Card -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg">
         <!-- Header -->
-        <div class="bg-orange-100 dark:bg-gray-700 px-6 py-5 border-b border-orange-200 dark:border-gray-600">
+        <div class="bg-orange-100 dark:bg-gray-700 px-6 py-5 border-b border-orange-200 dark:border-gray-600 rounded-t-lg">
             <h1 class="text-3xl font-bold text-orange-800 dark:text-orange-400" style="font-family: 'Spartan', sans-serif;">Create a New Post</h1>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">Share your knowledge and help the developer community grow.</p>
         </div>
@@ -136,52 +135,164 @@
                 </div>
 
                 <!-- Tags Section -->
-                <div>
+                <div x-data="tagSelector" class="space-y-4">
                     <label class="block text-sm font-bold text-gray-700 dark:text-gray-200 mb-2">
                         <span class="flex items-center gap-2">
                             <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-semibold">4</span>
                             Select Tags
                         </span>
                     </label>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Help others find your question by selecting relevant tags</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Add up to 5 relevant tags. Start typing to see suggestions.</p>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-4">
-                        @foreach($tags as $tag)
-                            <label class="relative flex items-center cursor-pointer group">
-                                <input
-                                    type="checkbox"
-                                    id="tag_{{ $tag }}"
-                                    name="Tags[]"
-                                    value="{{ $tag }}"
-                                    @checked(in_array($tag, $selectedTags, true))
-                                    class="peer sr-only"
+                    <!-- Selected Tags Display -->
+                    <div class="flex flex-wrap gap-2 mb-3" x-show="tags.length > 0" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+                        <template x-for="(tag, index) in tags" :key="index">
+                            <div class="group inline-flex items-center gap-2 rounded-full border border-orange-200 dark:border-orange-500/20 bg-orange-50/50 dark:bg-orange-500/10 px-4 py-2 shadow-sm hover:border-orange-300 dark:hover:border-orange-500/40 transition-all duration-200">
+                                <span x-text="tag" class="text-base font-bold text-orange-700 dark:text-orange-400 capitalize select-none max-w-[220px] truncate"></span>
+                                <button
+                                    type="button"
+                                    @click.stop="removeTag(index)"
+                                    class="h-6 w-6 inline-flex items-center justify-center rounded-full text-orange-400 hover:text-red-500 hover:bg-white dark:hover:bg-gray-800 transition-all duration-200 cursor-pointer"
+                                    title="Remove tag"
                                 >
-                                <div class="w-full px-4 py-2.5 text-sm font-medium text-center rounded-md border-2 border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 text-gray-700 dark:text-gray-300
-                                    peer-checked:border-orange-700 peer-checked:bg-orange-50 peer-checked:text-orange-800
-                                    dark:peer-checked:border-orange-500 dark:peer-checked:bg-orange-900/30 dark:peer-checked:text-orange-300
-                                    hover:border-orange-400 dark:hover:border-orange-600 transition">
-                                    {{ $tag }}
-                                </div>
-                            </label>
-                        @endforeach
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                                <input type="hidden" name="Tags[]" :value="tag">
+                            </div>
+                        </template>
                     </div>
 
-                    <!-- Custom Tags -->
-                    <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
-                        <label for="custom-tags" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                            Add Custom Tags
-                        </label>
+                    <!-- Input and Suggestions -->
+                    <div class="relative">
                         <input
                             type="text"
-                            id="custom-tags"
-                            name="custom_tags"
-                            value="{{ old('custom_tags') }}"
-                            placeholder="e.g., Node.js, React Hooks, PostgreSQL (comma-separated)"
-                            class="w-full px-4 py-3 rounded-md border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-700 focus:border-orange-700 dark:focus:ring-orange-500 dark:focus:border-orange-500 transition"
+                            x-model="search"
+                            @input="filterTags()"
+                            @keydown.enter.prevent="selectHighlighted()"
+                            @keydown.backspace="handleBackspace()"
+                            @keydown.arrow-down.prevent="highlightNext()"
+                            @keydown.arrow-up.prevent="highlightPrev()"
+                            placeholder="Search or create tags..."
+                            :disabled="tags.length >= 5"
+                            class="w-full px-4 py-3 rounded-md border border-gray-300 bg-white dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-700 focus:border-orange-700 dark:focus:ring-orange-500 dark:focus:border-orange-500 transition disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
                         >
-                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Separate multiple tags with commas</p>
+
+                        <!-- Suggestions Dropdown -->
+                        <div x-show="suggestions.length > 0 && showSuggestions"
+                             @click.away="showSuggestions = false"
+                             class="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md shadow-2xl max-h-80 overflow-y-auto"
+                             style="display: none;">
+                            <ul class="py-1 text-base sm:text-sm">
+                                <template x-for="(suggestion, index) in suggestions" :key="index">
+                                    <li
+                                        @click="addTag(suggestion)"
+                                        @mouseenter="highlightedIndex = index"
+                                        class="px-4 py-3 cursor-pointer flex items-center justify-between border-b border-gray-100 dark:border-gray-700 last:border-0"
+                                        :class="index === highlightedIndex ? 'bg-orange-100 dark:bg-gray-700' : 'bg-white dark:bg-gray-800'"
+                                    >
+                                        <div class="flex flex-col">
+                                            <span
+                                                class="font-semibold capitalize"
+                                                :class="index === highlightedIndex ? 'text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'"
+                                            >
+                                                <!-- Show 'Create: ' prefix if it's the custom tag option (last item and matches search) -->
+                                                <span x-text="suggestion === search && !allAvailableTags.includes(suggestion.toLowerCase()) ? 'Create: ' + suggestion : suggestion"></span>
+                                            </span>
+                                        </div>
+
+                                        <!-- Add Icon -->
+                                        <svg x-show="index === highlightedIndex" class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
                     </div>
+
+                    <p x-show="tags.length >= 5" class="text-xs text-red-500 mt-1" style="display: none;">Maximum of 5 tags allowed.</p>
                 </div>
+
+                <script>
+                    document.addEventListener('alpine:init', () => {
+                        Alpine.data('tagSelector', () => ({
+                            tags: @json($selectedTags),
+                            allAvailableTags: @json($allTags),
+                            search: '',
+                            suggestions: [],
+                            showSuggestions: false,
+                            highlightedIndex: -1,
+
+                            filterTags() {
+                                if (this.search.length < 1) {
+                                    this.suggestions = [];
+                                    this.showSuggestions = false;
+                                    return;
+                                }
+
+                                const query = this.search.toLowerCase();
+                                const exactMatchExists = this.allAvailableTags.some(tag => tag.toLowerCase() === query);
+
+                                // Filter existing tags
+                                this.suggestions = this.allAvailableTags.filter(tag =>
+                                    tag.toLowerCase().includes(query) &&
+                                    !this.tags.map(t => t.toLowerCase()).includes(tag.toLowerCase())
+                                ).slice(0, 50); // Increased limit significantly
+
+                                // Add "Create new tag" option if exact match doesn't exist and not already selected
+                                if (!exactMatchExists && !this.tags.map(t => t.toLowerCase()).includes(query)) {
+                                    this.suggestions.push(this.search); // Push original case
+                                }
+
+                                this.showSuggestions = true;
+                                this.highlightedIndex = -1;
+                            },
+
+                            addTag(tag) {
+                                tag = tag.trim();
+                                // Check if tag is already selected (case-insensitive)
+                                if (tag && this.tags.length < 5 && !this.tags.map(t => t.toLowerCase()).includes(tag.toLowerCase())) {
+                                    this.tags.push(tag);
+                                    this.search = '';
+                                    this.suggestions = [];
+                                    this.showSuggestions = false;
+                                }
+                            },
+
+                            removeTag(index) {
+                                this.tags.splice(index, 1);
+                            },
+
+                            handleBackspace() {
+                                if (this.search === '' && this.tags.length > 0) {
+                                    this.tags.pop();
+                                }
+                            },
+
+                            highlightNext() {
+                                if (this.showSuggestions && this.suggestions.length > 0) {
+                                    this.highlightedIndex = (this.highlightedIndex + 1) % this.suggestions.length;
+                                }
+                            },
+
+                            highlightPrev() {
+                                if (this.showSuggestions && this.suggestions.length > 0) {
+                                    this.highlightedIndex = (this.highlightedIndex - 1 + this.suggestions.length) % this.suggestions.length;
+                                }
+                            },
+
+                            selectHighlighted() {
+                                if (this.highlightedIndex >= 0 && this.suggestions.length > 0) {
+                                    this.addTag(this.suggestions[this.highlightedIndex]);
+                                } else {
+                                     this.addTag(this.search);
+                                }
+                            }
+                        }));
+                    });
+                </script>
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col-reverse sm:flex-row gap-3 pt-6 border-t border-gray-200 dark:border-gray-600">

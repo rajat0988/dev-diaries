@@ -27,6 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/questions/show/{id}', [QuestionController::class, 'show'])->name('questions.show');
 
     Route::get('/questions/load-more-tags', [QuestionController::class, 'loadMoreTags'])->name('questions.loadMoreTags');
+
+    // API for tag suggestions
+    Route::get('/tags/search', [QuestionController::class, 'searchTags'])->name('tags.search');
+
     Route::get('/questions/filter', [QuestionController::class, 'filterByTag'])->name('questions.filter');
     Route::post('/questions/{question}/replies', [ReplyController::class, 'store'])->name('replies.store');
     Route::post('/questions/{id}/upvote', [QuestionController::class, 'upvote'])->name('questions.upvote');
@@ -40,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
     Route::get('/user/{id}', [ProfileController::class, 'show'])->name('profile.show');
-    
+
     // Toast test page
     Route::get('/toast-test', function () {
         return view('toast-test');
@@ -60,7 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-Route::get('/email/verify',function(){
+Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
@@ -75,4 +79,4 @@ Route::post('/email/verification-notification', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
