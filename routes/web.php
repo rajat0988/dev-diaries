@@ -32,7 +32,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/tags/search', [QuestionController::class, 'searchTags'])->name('tags.search');
 
     Route::get('/questions/filter', [QuestionController::class, 'filterByTag'])->name('questions.filter');
-    Route::post('/questions/{question}/replies', [ReplyController::class, 'store'])->name('replies.store');
+Route::post('/questions/{ques~tion}/replies', [ReplyController::class, 'store'])->name('replies.store');
     Route::post('/questions/{id}/upvote', [QuestionController::class, 'upvote'])->name('questions.upvote');
     Route::post('/questions/{id}/downvote', [QuestionController::class, 'downvote'])->name('questions.downvote');
     Route::post('/report/question/{id}', [ReportController::class, 'reportQuestion'])->name('report.question');
