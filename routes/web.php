@@ -13,12 +13,18 @@ use App\Http\Controllers\ReportController;
 use App\Http\Middleware\AdminMiddleware;
 
 Route::middleware(['auth', AdminMiddleware::class])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::post('/admin/users/{id}/approve', [AdminController::class, 'approveUser'])->name('admin.users.approve');
+    Route::delete('/admin/users/{id}/reject', [AdminController::class, 'rejectUser'])->name('admin.users.reject');
+    Route::post('/admin/users/import', [AdminController::class, 'importUsers'])->name('admin.users.import');
+
     Route::delete('/questions/{id}', [QuestionController::class, 'destroy'])->name('questions.destroy');
     Route::delete('/replies/{id}', [ReplyController::class, 'destroy'])->name('replies.destroy');
     Route::get('/admin/reported', [AdminController::class, 'reportedItems'])->name('admin.reported');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'approved', 'verified'])->group(function () {
     Route::get('/questions', [QuestionController::class, 'index'])->name('questions.index');
 
     Route::get('/questions/create', [QuestionController::class, 'create'])->name('questions.create');
@@ -32,7 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/tags/search', [QuestionController::class, 'searchTags'])->name('tags.search');
 
     Route::get('/questions/filter', [QuestionController::class, 'filterByTag'])->name('questions.filter');
-Route::post('/questions/{ques~tion}/replies', [ReplyController::class, 'store'])->name('replies.store');
+    Route::post('/questions/{ques~tion}/replies', [ReplyController::class, 'store'])->name('replies.store');
     Route::post('/questions/{id}/upvote', [QuestionController::class, 'upvote'])->name('questions.upvote');
     Route::post('/questions/{id}/downvote', [QuestionController::class, 'downvote'])->name('questions.downvote');
     Route::post('/report/question/{id}', [ReportController::class, 'reportQuestion'])->name('report.question');
@@ -41,8 +47,6 @@ Route::post('/questions/{ques~tion}/replies', [ReplyController::class, 'store'])
     Route::post('/replies/{id}/upvote', [ReplyController::class, 'upvote'])->name('replies.upvote');
     Route::post('/replies/{id}/downvote', [ReplyController::class, 'downvote'])->name('replies.downvote');
 
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
-
     Route::get('/user/{id}', [ProfileController::class, 'show'])->name('profile.show');
 
     // Toast test page
@@ -50,7 +54,9 @@ Route::post('/questions/{ques~tion}/replies', [ReplyController::class, 'store'])
         return view('toast-test');
     })->name('toast.test');
 
-    // Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/dashboard', function () {
         return redirect('/');
@@ -66,17 +72,17 @@ Route::post('/questions/{ques~tion}/replies', [ReplyController::class, 'store'])
 
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
+})->middleware(['auth', 'approved'])->name('verification.notice');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
     return redirect('/');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+})->middleware(['auth', 'signed', 'approved'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+})->middleware(['auth', 'throttle:6,1', 'approved'])->name('verification.send');
 
 
 require __DIR__ . '/auth.php';

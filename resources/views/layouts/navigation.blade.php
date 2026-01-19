@@ -1,4 +1,4 @@
-<nav x-data="{ dropdownOpen: false }" class="bg-white border-b border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+﻿<nav x-data="{ dropdownOpen: false }" class="bg-white border-b border-gray-100 dark:bg-gray-800 dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             <!-- Logo -->
@@ -13,6 +13,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="dark:text-gray-300 dark:hover:text-gray-100">
                         {{ __('Home') }}
                     </x-nav-link>
+
+                    @if(Auth::check() && Auth::user()->role === 'admin')
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" class="text-orange-600 dark:text-orange-400 font-bold">
+                            {{ __('Admin') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -41,8 +47,16 @@
                         </div>
                         <div class="border-t border-gray-200 dark:border-gray-600">
                             <div class="p-2">
+                                @if(Auth::check() && Auth::user()->role === 'admin')
+                                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" class="text-orange-600 dark:text-orange-400 font-bold">
+                                        {{ __('Admin Dashboard') }}
+                                    </x-responsive-nav-link>
+                                @endif
                                 <x-responsive-nav-link :href="route('profile.show', ['id' => Auth::user()->id])" class="dark:text-gray-300 dark:hover:bg-gray-600">
                                     {{ __('Profile') }}
+                                </x-responsive-nav-link>
+                                <x-responsive-nav-link :href="route('profile.edit')" class="dark:text-gray-300 dark:hover:bg-gray-600">
+                                    {{ __('Reset Password') }}
                                 </x-responsive-nav-link>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -82,8 +96,16 @@
                         </div>
                         <div class="border-t border-gray-200 dark:border-gray-600">
                             <div class="p-2">
+                                @if(Auth::check() && Auth::user()->role === 'admin')
+                                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')" class="text-orange-600 dark:text-orange-400 font-bold">
+                                        {{ __('Admin Dashboard') }}
+                                    </x-responsive-nav-link>
+                                @endif
                                 <x-responsive-nav-link :href="route('profile.show', ['id' => Auth::user()->id])" class="dark:text-gray-300 dark:hover:bg-gray-600">
                                     {{ __('Profile') }}
+                                </x-responsive-nav-link>
+                                <x-responsive-nav-link :href="route('profile.edit')" class="dark:text-gray-300 dark:hover:bg-gray-600">
+                                    {{ __('Reset Password') }}
                                 </x-responsive-nav-link>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -100,3 +122,4 @@
         </div>
     </div>
 </nav>
+

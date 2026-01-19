@@ -98,7 +98,7 @@ class Question extends Model
 
         $tagArray = array_values(array_unique(array_filter($tagArray)));
 
-        $this->attributes['Tags'] = $tagArray;
+        $this->attributes['Tags'] = json_encode($tagArray);
     }
 
     // Accessor to desanitize content when retrieving
