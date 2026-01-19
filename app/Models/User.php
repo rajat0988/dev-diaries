@@ -7,23 +7,30 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
+use Illuminate\Database\Eloquent\Model;
 
-
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property \\Illuminate\\Support\\Carbon|null $email_verified_at
+ * @property mixed $password
+ * @property string|null $remember_token
+ * @property \\Illuminate\\Support\\Carbon|null $created_at
+ * @property \\Illuminate\\Support\\Carbon|null $updated_at
+ * @property bool $is_approved
+ * @property string $role
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
     use MustVerifyEmailTrait;
 
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'is_approved',
     ];
 
     /**
@@ -46,6 +53,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_approved' => 'boolean',
         ];
     }
 
@@ -59,10 +67,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Reply::class, 'EmailId', 'email');
     }
 
-    public function sendEmailVerificationNotification()
+    public function isAdmin()
     {
-        // Since we're using QUEUE_CONNECTION=sync, dispatch immediately
-        // This ensures emails are sent right away without queue delays
-        $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
+        return $this->role === 'admin';
     }
 }

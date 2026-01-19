@@ -40,7 +40,7 @@ class DummyDataSeeder extends Seeder
             'EmailId' => $user1->email,
             'Title' => 'How to center a div in CSS?',
             'Content' => 'I have been trying to center a div both horizontally and vertically, but I am not able to do it. I have tried using flexbox and grid, but it is not working. Can someone please help me with this?',
-            'Tags' => json_encode(['css', 'html', 'web-development']),
+            'Tags' => ['css', 'html', 'web-development'],
         ]);
 
         $question2 = Question::create([
@@ -49,7 +49,7 @@ class DummyDataSeeder extends Seeder
             'EmailId' => $user2->email,
             'Title' => 'What is the difference between a variable and a constant in PHP?',
             'Content' => 'I am new to PHP and I am confused between variables and constants. Can someone please explain the difference between them with an example?',
-            'Tags' => json_encode(['php', 'programming', 'backend']),
+            'Tags' => ['php', 'programming', 'backend'],
         ]);
 
         $question3 = Question::create([
@@ -58,7 +58,7 @@ class DummyDataSeeder extends Seeder
             'EmailId' => $user3->email,
             'Title' => 'How to connect to a MySQL database using Python?',
             'Content' => 'I am trying to connect to a MySQL database using Python, but I am getting an error. I have installed the mysql-connector-python library, but it is still not working. Can someone please help me with this?',
-            'Tags' => json_encode(['python', 'mysql', 'database']),
+            'Tags' => ['python', 'mysql', 'database'],
         ]);
 
         // Create some replies

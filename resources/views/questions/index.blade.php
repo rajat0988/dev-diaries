@@ -46,6 +46,12 @@
 
         <!-- Main Content - Questions -->
         <main class="lg:w-3/4">
+            <section class="page-hero mb-8 text-center lg:text-left">
+                <h2 class="section-heading">Share, Learn, and Grow</h2>
+                <p class="section-description">
+                    Dev Diaries is a collaborative space for developers to document their progress and troubleshoot challenges. Explore community questions, contribute your own insights, and track your learning journey with the people you know.
+                </p>
+            </section>
             <!-- Button: Ask a Question -->
             <div class="text-center mb-6">
                 <a href="{{ route('questions.create') }}" class="button-primary">
@@ -62,7 +68,7 @@
 
             <!-- Filtered Questions -->
             @if (isset($selectedTags) && !empty($selectedTags))
-                <h2 class="text-xl text-blue-500 mb-4">Filtered Questions</h2>
+                <h2 class="section-subheading text-blue-500">Filtered Questions</h2>
                 @forelse($filtered_questions as $question)
                     <div class="question-card">
                         <div class="flex justify-between items-center cursor-pointer"
@@ -84,7 +90,7 @@
             @endif
 
             <!-- Recent Questions -->
-            <h2 class="text-xl text-orange-700 mt-8 mb-4">Recent Questions</h2>
+            <h2 class="section-subheading text-orange-700">Recent Questions</h2>
             <div class="space-y-4">
                 @foreach ($all_questions as $question)
                     <div class="question-card">

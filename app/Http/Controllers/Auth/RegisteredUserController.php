@@ -26,23 +26,27 @@ class RegisteredUserController extends Controller
                 'email',
                 'max:255',
                 'unique:users',
-                function ($attribute, $value, $fail) {
-                    if (!str_ends_with($value, '@jimsindia.org')) {
-                        $fail('The email must be a valid jimsindia.org email address.');
-                    }
-                }
             ],
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
         ]);
+
+        $isJimsUrl = str_ends_with($request->email, '@jimsindia.org');
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'is_approved' => $isJimsUrl,
         ]);
 
         event(new Registered($user));
-        return redirect()->route('register');
-        // return redirect()->route('verification.notice');
+
+        if ($isJimsUrl) {
+            $message = 'Registration successful! Please sign in with your credentials.';
+            return redirect()->route('register')->with('status', $message);
+        } else {
+            $message = 'Registration successful! Your account is pending approval by an administrator.';
+            return redirect()->route('register')->with('success', $message);
+        }
     }
 }

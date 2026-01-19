@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('Tech Forum', 'Tech Forum') }}</title>
+        <title>{{ config('app.name', 'Dev Diaries') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -13,19 +13,19 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        
+
         <script>
             // Simple dark mode implementation without Alpine dependencies
             function initDarkMode() {
                 // Check if dark mode preference is stored
                 const isDarkMode = localStorage.getItem('darkMode') === 'true';
-                
+
                 // Apply dark mode class to document
                 if (isDarkMode) {
                     document.documentElement.classList.add('dark');
                 }
             }
-            
+
             // Toggle dark mode
             function toggleDarkMode() {
                 const isDarkMode = document.documentElement.classList.contains('dark');
@@ -37,7 +37,7 @@
                     localStorage.setItem('darkMode', 'true');
                 }
             }
-            
+
             // Initialize dark mode on page load
             document.addEventListener('DOMContentLoaded', function() {
                 initDarkMode();

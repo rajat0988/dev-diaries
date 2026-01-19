@@ -28,7 +28,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('verification.notice', 'absolute: false'));
+        // Redirect to the intended page or to the questions page
+        return redirect()->intended(route('verification.notice', absolute: false));
     }
 
     /**

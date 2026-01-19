@@ -75,6 +75,32 @@ class Question extends Model
         $this->attributes['Content'] = self::sanitizeContent($value);
     }
 
+    // Mutator to normalize tags before saving
+    public function setTagsAttribute($value)
+    {
+        if (is_array($value)) {
+            $tagArray = $value;
+        } elseif (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                $tagArray = $decoded;
+            } else {
+                // Handle comma-separated string
+                $tagArray = explode(',', $value);
+            }
+        } else {
+            $tagArray = [];
+        }
+
+        $tagArray = array_map(function ($tag) {
+            return strtolower(trim((string)$tag));
+        }, $tagArray);
+
+        $tagArray = array_values(array_unique(array_filter($tagArray)));
+
+        $this->attributes['Tags'] = json_encode($tagArray);
+    }
+
     // Accessor to desanitize content when retrieving
     public function getContentAttribute($value)
     {
