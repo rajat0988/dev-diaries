@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeEmail;
+use App\Jobs\SendAccountCreatedEmailJob;
 
 class AdminController extends Controller
 {
@@ -53,6 +56,8 @@ class AdminController extends Controller
         $user->is_approved = true;
         $user->save();
 
+        Mail::to($user)->send(new WelcomeEmail($user));
+
         return redirect()->route('admin.users')->with('success', 'User ' . $user->name . ' approved successfully.');
     }
 
@@ -87,13 +92,16 @@ class AdminController extends Controller
 
             if (User::where('email', $email)->exists()) continue;
 
-            User::create([
+            $user = User::create([
                 'name' => $name,
                 'email' => $email,
                 'password' => Hash::make($password),
                 'is_approved' => true,
                 'email_verified_at' => now(),
             ]);
+
+            SendAccountCreatedEmailJob::dispatch($user, $password);
+
             $count++;
         }
 
