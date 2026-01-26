@@ -35,6 +35,13 @@
                 </div>
             @endif
 
+            <!-- Display Warning Messages -->
+            @if (session('warning'))
+                <div class="warning-message w-full max-w-sm mb-4">
+                    {{ session('warning') }}
+                </div>
+            @endif
+
             <!-- LOGIN FORM -->
             <div id="login-form-container" class="w-full max-w-sm transition-opacity duration-300">
                 <form method="POST" action="{{ route('login') }}">

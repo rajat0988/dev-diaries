@@ -6,6 +6,7 @@ use App\Models\Question;
 use App\Models\Reply;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -79,31 +80,33 @@ class AdminController extends Controller
         $data = array_map('str_getcsv', file($file->getRealPath()));
 
         $count = 0;
-        foreach ($data as $row) {
-            if (count($row) < 3) continue;
+        DB::transaction(function () use ($data, &$count) {
+            foreach ($data as $row) {
+                if (count($row) < 3) continue;
 
-            $name = trim($row[0]);
-            $email = trim($row[1]);
-            $password = trim($row[2]);
+                $name = trim($row[0]);
+                $email = trim($row[1]);
+                $password = trim($row[2]);
 
-            if (strtolower($name) === 'name' && strtolower($email) === 'email') continue;
+                if (strtolower($name) === 'name' && strtolower($email) === 'email') continue;
 
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) continue;
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) continue;
 
-            if (User::where('email', $email)->exists()) continue;
+                if (User::where('email', $email)->exists()) continue;
 
-            $user = User::create([
-                'name' => $name,
-                'email' => $email,
-                'password' => Hash::make($password),
-                'is_approved' => true,
-                'email_verified_at' => now(),
-            ]);
+                $user = User::create([
+                    'name' => $name,
+                    'email' => $email,
+                    'password' => Hash::make($password),
+                    'is_approved' => true,
+                    'email_verified_at' => now(),
+                ]);
 
-            SendAccountCreatedEmailJob::dispatch($user, $password);
+                SendAccountCreatedEmailJob::dispatch($user, $password);
 
-            $count++;
-        }
+                $count++;
+            }
+        });
 
         return redirect()->route('admin.users')->with('success', "$count users imported successfully.");
     }

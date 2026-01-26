@@ -12,12 +12,15 @@ class QuestionController extends Controller
 {
     public function create()
     {
-        // Fetch all tags data robustly
-        // Using PHP processing instead of raw JSON queries to ensure compatibility and correctness
+        // Fetch all tags data robustly using DB query instead of hydrating all models
         $allTags = cache()->remember('all_tags_list', 60, function () {
-            return Question::all('Tags')->flatMap(function ($question) {
-                return $question->Tags ?? [];
-            })
+            return DB::table('questions')
+                ->whereNotNull('Tags')
+                ->pluck('Tags')
+                ->flatMap(function ($tags) {
+                    $decoded = json_decode($tags, true);
+                    return is_array($decoded) ? $decoded : [];
+                })
                 ->map(fn($tag) => strtolower(trim($tag)))
                 ->unique()
                 ->values()

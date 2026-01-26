@@ -45,7 +45,7 @@
         </script>
     </head>
     <body class="font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-        <div class="min-h-screen flex flex-col">
+        <div class="min-h-screen flex flex-col pt-16">
             @include('layouts.navigation')
 
             <!-- Page Heading -->

@@ -71,4 +71,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->role === 'admin';
     }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        \App\Jobs\VerifyEmailJob::dispatch($this);
+    }
 }
