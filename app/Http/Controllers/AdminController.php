@@ -77,37 +77,61 @@ class AdminController extends Controller
         ]);
 
         $file = $request->file('csv_file');
-        $data = array_map('str_getcsv', file($file->getRealPath()));
+        \Illuminate\Support\Facades\Log::info('Importing file: ' . $file->getRealPath());
 
         $count = 0;
-        DB::transaction(function () use ($data, &$count) {
-            foreach ($data as $row) {
-                if (count($row) < 3) continue;
 
-                $name = trim($row[0]);
-                $email = trim($row[1]);
-                $password = trim($row[2]);
+        try {
+            DB::transaction(function () use ($file, &$count) {
+                if (($handle = fopen($file->getRealPath(), "r")) !== FALSE) {
+                    while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                        \Illuminate\Support\Facades\Log::info("Processing row: " . json_encode($row));
 
-                if (strtolower($name) === 'name' && strtolower($email) === 'email') continue;
+                        if (count($row) < 3) {
+                            \Illuminate\Support\Facades\Log::info("Row skipped: insufficient columns");
+                            continue;
+                        }
 
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) continue;
+                        $name = trim($row[0]);
+                        $email = trim($row[1]);
+                        $password = trim($row[2]);
 
-                if (User::where('email', $email)->exists()) continue;
+                        if (strtolower($name) === 'name' && strtolower($email) === 'email') {
+                            \Illuminate\Support\Facades\Log::info("Row skipped: Header detected");
+                            continue;
+                        }
 
-                $user = User::create([
-                    'name' => $name,
-                    'email' => $email,
-                    'password' => Hash::make($password),
-                    'is_approved' => true,
-                    'email_verified_at' => now(),
-                ]);
+                        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            \Illuminate\Support\Facades\Log::info("Row skipped: Invalid email - $email");
+                            continue;
+                        }
 
-                SendAccountCreatedEmailJob::dispatch($user, $password);
+                        if (User::where('email', $email)->exists()) {
+                            \Illuminate\Support\Facades\Log::info("Row skipped: Email exists - $email");
+                            continue;
+                        }
 
-                $count++;
-            }
-        });
+                        $user = User::create([
+                            'name' => $name,
+                            'email' => $email,
+                            'password' => Hash::make($password),
+                            'is_approved' => true,
+                            'email_verified_at' => now(),
+                        ]);
 
+                        SendAccountCreatedEmailJob::dispatch($user, $password);
+
+                        $count++;
+                    }
+                    fclose($handle);
+                }
+            });
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Import failed: ' . $e->getMessage());
+            return redirect()->route('admin.users')->with('error', 'Import failed: ' . $e->getMessage());
+        }
+
+        \Illuminate\Support\Facades\Log::info("Import completed. Created $count users.");
         return redirect()->route('admin.users')->with('success', "$count users imported successfully.");
     }
 }

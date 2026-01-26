@@ -79,6 +79,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function sendEmailVerificationNotification()
     {
-        \App\Jobs\VerifyEmailJob::dispatch($this);
+        if ($this->is_approved) {
+            \App\Jobs\VerifyEmailJob::dispatch($this);
+        }
     }
 }
