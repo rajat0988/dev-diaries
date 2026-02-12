@@ -6,9 +6,13 @@ use App\Models\Question;
 use App\Models\Reply;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeEmail;
+use App\Jobs\SendAccountCreatedEmailJob;
 
 class AdminController extends Controller
 {
@@ -53,6 +57,8 @@ class AdminController extends Controller
         $user->is_approved = true;
         $user->save();
 
+        Mail::to($user)->send(new WelcomeEmail($user));
+
         return redirect()->route('admin.users')->with('success', 'User ' . $user->name . ' approved successfully.');
     }
 
@@ -71,32 +77,61 @@ class AdminController extends Controller
         ]);
 
         $file = $request->file('csv_file');
-        $data = array_map('str_getcsv', file($file->getRealPath()));
+        \Illuminate\Support\Facades\Log::info('Importing file: ' . $file->getRealPath());
 
         $count = 0;
-        foreach ($data as $row) {
-            if (count($row) < 3) continue;
 
-            $name = trim($row[0]);
-            $email = trim($row[1]);
-            $password = trim($row[2]);
+        try {
+            DB::transaction(function () use ($file, &$count) {
+                if (($handle = fopen($file->getRealPath(), "r")) !== FALSE) {
+                    while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                        \Illuminate\Support\Facades\Log::info("Processing row: " . json_encode($row));
 
-            if (strtolower($name) === 'name' && strtolower($email) === 'email') continue;
+                        if (count($row) < 3) {
+                            \Illuminate\Support\Facades\Log::info("Row skipped: insufficient columns");
+                            continue;
+                        }
 
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) continue;
+                        $name = trim($row[0]);
+                        $email = trim($row[1]);
+                        $password = trim($row[2]);
 
-            if (User::where('email', $email)->exists()) continue;
+                        if (strtolower($name) === 'name' && strtolower($email) === 'email') {
+                            \Illuminate\Support\Facades\Log::info("Row skipped: Header detected");
+                            continue;
+                        }
 
-            User::create([
-                'name' => $name,
-                'email' => $email,
-                'password' => Hash::make($password),
-                'is_approved' => true,
-                'email_verified_at' => now(),
-            ]);
-            $count++;
+                        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            \Illuminate\Support\Facades\Log::info("Row skipped: Invalid email - $email");
+                            continue;
+                        }
+
+                        if (User::where('email', $email)->exists()) {
+                            \Illuminate\Support\Facades\Log::info("Row skipped: Email exists - $email");
+                            continue;
+                        }
+
+                        $user = User::create([
+                            'name' => $name,
+                            'email' => $email,
+                            'password' => Hash::make($password),
+                            'is_approved' => true,
+                            'email_verified_at' => now(),
+                        ]);
+
+                        SendAccountCreatedEmailJob::dispatch($user, $password);
+
+                        $count++;
+                    }
+                    fclose($handle);
+                }
+            });
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Import failed: ' . $e->getMessage());
+            return redirect()->route('admin.users')->with('error', 'Import failed: ' . $e->getMessage());
         }
 
+        \Illuminate\Support\Facades\Log::info("Import completed. Created $count users.");
         return redirect()->route('admin.users')->with('success', "$count users imported successfully.");
     }
 }

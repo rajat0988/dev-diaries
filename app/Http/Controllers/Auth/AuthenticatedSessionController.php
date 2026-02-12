@@ -28,8 +28,24 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = $request->user();
+
+        if (!$user->is_approved) {
+            Auth::guard('web')->logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            return redirect()->route('register')->with('warning', 'Your account is currently pending approval. Please wait for an administrator to verify your account.');
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            return redirect()->intended(route('verification.notice', absolute: false));
+        }
+
         // Redirect to the intended page or to the questions page
-        return redirect()->intended(route('verification.notice', absolute: false));
+        return redirect()->intended(route('questions.index', absolute: false));
     }
 
     /**

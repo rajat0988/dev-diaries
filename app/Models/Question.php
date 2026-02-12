@@ -43,38 +43,6 @@ class Question extends Model
         $this->decrement('Upvotes');
     }
 
-    //Helper functions:
-    function sanitizeContent($content)
-    {
-        $replacements = [
-            '<' => '&lt;',
-            '>' => '&gt;',
-            '{' => '&lcub;',  // Using HTML entity for left curly brace
-            '}' => '&rcub;',  // Using HTML entity for right curly brace
-        ];
-
-        return strtr($content, $replacements);
-    }
-
-    function desanitizeContent($content)
-    {
-        $replacements = [
-            '&lt;' => '<',
-            '&gt;' => '>',
-            '&lcub;' => '{',
-            '&rcub;' => '}',
-        ];
-
-        return strtr($content, $replacements);
-    }
-
-
-    // Mutator to sanitize content before saving
-    public function setContentAttribute($value)
-    {
-        $this->attributes['Content'] = self::sanitizeContent($value);
-    }
-
     // Mutator to normalize tags before saving
     public function setTagsAttribute($value)
     {
@@ -99,12 +67,6 @@ class Question extends Model
         $tagArray = array_values(array_unique(array_filter($tagArray)));
 
         $this->attributes['Tags'] = json_encode($tagArray);
-    }
-
-    // Accessor to desanitize content when retrieving
-    public function getContentAttribute($value)
-    {
-        return self::desanitizeContent($value);
     }
 
     // Define the relationship with the Reply model
