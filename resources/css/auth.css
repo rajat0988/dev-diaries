@@ -1,107 +1,358 @@
 /* Authentication Page Styles */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
-/* Custom styles for the 3D aesthetic on the right side */
-.right-panel-bg {
-    background: linear-gradient(135deg, #ffe5e0 0%, #ffb3a0 50%, #ff8c66 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    min-height: 400px;
+body {
+    font-family: 'Outfit', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.safe-icon {
-    width: 250px;
-    height: 250px;
-    background: #ff4b2b; /* Main theme */
-    border-radius: 20px;
-    box-shadow: 0 40px 60px rgba(0, 0, 0, 0.2), 0 0 100px rgba(255, 75, 43, 0.5);
-    transform: rotateY(15deg) rotateX(10deg);
-    position: relative;
-    animation: float 5s ease-in-out infinite alternate;
-}
-
-.dial {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: #cc3a21; /* Darker shade */
-    border: 8px solid #ff7b5a; /* Lighter ring */
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.handle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px;
-    height: 10px;
-    background: #f0e5e0; /* Grayish handle */
-    transform: translate(-50%, -50%) rotate(45deg);
-    border-radius: 5px;
-}
-
-@keyframes float {
-    0% {
-        transform: translate(0, 0) rotateY(15deg) rotateX(10deg);
-    }
-    100% {
-        transform: translate(10px, -10px) rotateY(15deg) rotateX(10deg);
-    }
-}
-
+/* ── App Container ── */
 #app-container {
     min-height: 100vh;
-    font-family: "Inter", sans-serif;
     background-color: white;
 }
 
+/* ── Right Panel ── */
+.right-panel-bg {
+    background-color: #f5a080;
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    padding: 0 !important;
+    margin: 0;
+}
+
+.illustration-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* ── Typography ── */
+.font-heading {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.03em;
+}
+
+.brand-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.brand-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.65rem;
+    color: #94a3b8;
+}
+
+.welcome-heading {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: #111827;
+}
+
+.welcome-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+    color: #9ca3af;
+    letter-spacing: 0.01em;
+}
+
+/* ── Divider with text ── */
+.divider-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 1.25rem 0;
+    font-size: 0.7rem;
+    color: #d1d5db;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+
+.divider-text::before,
+.divider-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+}
+
+/* ── Inputs ── */
 .custom-input {
     border-color: #e5e7eb;
+    padding: 0.7rem 1rem;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-width: 1.5px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    border-radius: 0.75rem;
+    background-color: #f9fafb;
+    color: #111827;
+}
+
+.custom-input::placeholder {
+    color: #c8cdd5;
+    font-weight: 400;
 }
 
 .custom-input:focus {
-    border-color: #ff4b2b;
-    box-shadow: 0 0 0 1px #ff4b2b;
+    border-color: #FF6B4A;
+    box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.08);
     outline: none;
+    background-color: #fff;
 }
 
+.input-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.375rem;
+    display: block;
+}
+
+/* ── Tab Switching ── */
 .tab-active {
     background-color: white;
-    color: #ff4b2b;
-    box-shadow: 0 2px 6px rgba(255, 75, 43, 0.3);
+    color: #FF6B4A;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+    font-weight: 700;
 }
 
+/* ── Primary Button ── */
 .button-primary {
-    background-color: #ff4b2b;
+    background: linear-gradient(135deg, #FF6B4A 0%, #ff5233 100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.02em;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
 }
 
 .button-primary:hover {
-    background-color: #e63f20;
+    background: linear-gradient(135deg, #ff5233 0%, #e5421f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgba(255, 107, 74, 0.35);
 }
 
+.button-primary:active {
+    transform: translateY(0px);
+    box-shadow: 0 4px 8px -2px rgba(255, 107, 74, 0.25);
+}
+
+/* ── Inline Error ── */
 .error-message {
-    color: #dc2626;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
+    color: #ef4444;
+    font-size: 0.7rem;
+    margin-top: 0.35rem;
+    font-weight: 500;
+    display: block;
+    font-family: 'Outfit', sans-serif;
 }
 
-.success-message {
-    color: #16a34a;
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-    padding: 0.75rem;
-    background-color: #f0fdf4;
-    border-radius: 0.5rem;
-    border: 1px solid #bbf7d0;
+/* ── Toast Notification System ── */
+.toast-container {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    pointer-events: none;
 }
 
-/* Custom margin for spacing */
-.mt-15 {
-    margin-top: 3.75rem; /* 60px */
+.toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    border-radius: 0.875rem;
+    min-width: 320px;
+    max-width: 420px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.45;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(12px);
+    animation: toast-slide-in 0.4s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+    transform: translateX(110%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.toast.toast-hiding {
+    animation: toast-slide-out 0.35s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* Toast Types */
+.toast-success {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    color: #065f46;
+    border-color: #a7f3d0;
+}
+
+.toast-error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
+.toast-warning {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    color: #92400e;
+    border-color: #fde68a;
+}
+
+.toast-info {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    color: #1e40af;
+    border-color: #bfdbfe;
+}
+
+.toast-icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+}
+
+.toast-body {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+    letter-spacing: 0.01em;
+}
+
+.toast-text {
+    font-weight: 450;
+    opacity: 0.85;
+    font-size: 0.8rem;
+}
+
+.toast-close {
+    flex-shrink: 0;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    padding: 2px;
+    background: none;
+    border: none;
+    color: currentColor;
+}
+
+.toast-close:hover {
+    opacity: 0.8;
+}
+
+/* Toast progress bar */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    border-radius: 0 0 0.875rem 0.875rem;
+    animation: toast-progress 5s linear forwards;
+}
+
+.toast-success .toast-progress { background: #10b981; }
+.toast-error .toast-progress { background: #ef4444; }
+.toast-warning .toast-progress { background: #f59e0b; }
+.toast-info .toast-progress { background: #3b82f6; }
+
+/* ── Animations ── */
+@keyframes toast-slide-in {
+    from {
+        transform: translateX(110%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toast-slide-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(110%);
+        opacity: 0;
+    }
+}
+
+@keyframes toast-progress {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* ── Link styles ── */
+.auth-link {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+
+.auth-link:hover {
+    color: #FF6B4A;
+}
+
+/* ── Footer Text ── */
+.footer-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem;
+    color: #d1d5db;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+    transition: color 0.3s ease;
+}
+
+.footer-text:hover {
+    color: #9ca3af;
+}
+
+/* ── Accent dot for brand ── */
+.accent-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #FF6B4A;
+    border-radius: 50%;
+    margin-left: 2px;
+    vertical-align: super;
+}
+
+/* ── Brand Colors ── */
+.text-brand-primary {
+    color: #FF6B4A;
 }
